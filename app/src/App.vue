@@ -11,19 +11,14 @@ import { generateCurl } from './core/generateCurl.ts'
 import DisplayCurl from './components/DisplayCurl.vue'
 
 const urlFormData = ref<Record<string, any>>({method: 'GET'})
-const headersFormData = ref<{ headerName?: string; headerValue?: string }>({})
+const headersFormData = ref<Header[]>([])
 const responseToDisplay = ref<ResponseToDisplay | undefined>(undefined)
 const generatedCurl = ref<string[] | string | undefined>(undefined)
 
 const getFormData = (): Options => {
-    const headers: Header[] = []
-
-    if (headersFormData.value.headerName && headersFormData.value.headerValue) {
-      headers.push({
-        name: headersFormData.value.headerName,
-        value: headersFormData.value.headerValue
-      })
-    }
+  const headers: Header[] = headersFormData.value
+    .filter(header => header.name && header.value)
+    .map(header => ({ name: header.name, value: header.value }))
 
     const options: Options = {
       url: urlFormData.value.url,
@@ -92,8 +87,5 @@ const submitCurl = () => {
     @apply text-7xl font-extrabold
   }
 
-  button {
-    @apply cursor-pointer bg-gray-300 hover:bg-gray-400 text-stone-800 font-bold py-2 px-4 rounded inline-flex items-center
-  }
 }
 </style>
