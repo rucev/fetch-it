@@ -25,7 +25,7 @@ const statusClass = computed(() => {
 </script>
 
 <template>
-  <div v-if="props.response">
+  <div class="response-container" v-if="props.response">
     <h3 class="text-lg font-semibold mb-2">Response:</h3>
 
     <div class="mb-4" >
@@ -46,7 +46,24 @@ const statusClass = computed(() => {
 
     <div>
       <h4 class="font-extrabold">Body:</h4>
-      <pre>{{ formattedBody }}</pre>
+      <div class="body-container">
+        <pre>{{ formattedBody }}</pre>
+      </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+@import "tailwindcss";
+
+@layer components {
+  .response-container{
+    @apply flex flex-col w-4/5 
+  }
+  .body-container {
+    @apply bg-stone-700 text-gray-50 w-full max-h-64 overflow-auto px-4 py-2 rounded;
+  }
+}
+</style>
+
+

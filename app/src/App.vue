@@ -10,7 +10,7 @@ import cURL from './components/buttons/cURL.vue'
 import { generateCurl } from './core/generateCurl.ts'
 import DisplayCurl from './components/DisplayCurl.vue'
 
-const urlFormData = ref<Record<string, any>>({})
+const urlFormData = ref<Record<string, any>>({method: 'GET'})
 const headersFormData = ref<{ headerName?: string; headerValue?: string }>({})
 const responseToDisplay = ref<ResponseToDisplay | undefined>(undefined)
 const generatedCurl = ref<string[] | string | undefined>(undefined)
@@ -35,6 +35,8 @@ const getFormData = (): Options => {
 }
 
 const submitFetch = async () => {
+  generatedCurl.value = undefined
+
   try {
     const options = getFormData()
 
@@ -46,6 +48,8 @@ const submitFetch = async () => {
 }
 
 const submitCurl = () => {
+  responseToDisplay.value = undefined
+
   try {
     const options = getFormData()
 
@@ -62,12 +66,15 @@ const submitCurl = () => {
 <template>
   <body>
     <h1>Fetch It</h1>
-    <UrlForm v-model="urlFormData" />
-    <HeadersForm v-model="headersFormData" />
-    <div class="flex flex-row gap-5">
+    <div class="flex flex-row h-8 gap-2">
       <Send @click="submitFetch" />
       <cURL @click="submitCurl" />
     </div>
+    <div class="flex flex-col gap-5 w-full px-7">
+        <UrlForm v-model="urlFormData" />
+        <HeadersForm v-model="headersFormData" />
+    </div>
+    <span class="w-4/5 h-0.5 bg-stone-900"></span>
     <DisplayCurl :curl="generatedCurl" />
     <DisplayResponse :response="responseToDisplay" />
   </body>
@@ -78,7 +85,7 @@ const submitCurl = () => {
 
 @layer base {
   body {
-    @apply bg-stone-800 text-gray-50 flex flex-col gap-5 items-center max-w-screen w-full h-screen pt-10
+    @apply bg-stone-800 text-gray-50 flex flex-col gap-5 items-center w-screen overflow-hidden max-h-screen pt-7
   }
 
   h1 {
