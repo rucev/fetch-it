@@ -13,19 +13,30 @@ const formattedBody = computed(() => {
   }
   return props.response.body
 })
+
+const statusClass = computed(() => {
+  const code = props.response?.statusCode ?? 0
+  if (code >= 200 && code < 300) return 'text-green-500'
+  if (code >= 400 && code < 500) return 'text-red-500'
+  if (code >= 500 && code < 600) return 'text-yellow-500'
+  return 'text-gray-400'
+})
+
 </script>
 
 <template>
   <div v-if="props.response">
     <h3 class="text-lg font-semibold mb-2">Response:</h3>
 
-    <div class="mb-4">
-      <h4 class="font-bold">Status:</h4>
-      <p>{{ props.response.statusCode }} - {{ props.response.statusMsg }}</p>
+    <div class="mb-4" >
+      <h4 class="font-extrabold">Status:</h4>
+        <p :class="['font-bold', statusClass]">
+          {{ props.response.statusCode }} - {{ props.response.statusMsg }}
+        </p>
     </div>
 
     <div class="mb-4">
-      <h4 class="font-bold">Headers:</h4>
+      <h4 class="font-extrabold">Headers:</h4>
       <ul>
         <li v-for="(header, index) in props.response.headers" :key="index">
           {{ header.name }}: {{ header.value }}
@@ -34,7 +45,7 @@ const formattedBody = computed(() => {
     </div>
 
     <div>
-      <h4 class="font-bold">Body:</h4>
+      <h4 class="font-extrabold">Body:</h4>
       <pre>{{ formattedBody }}</pre>
     </div>
   </div>
