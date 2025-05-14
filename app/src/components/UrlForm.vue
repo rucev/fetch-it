@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import Method from './buttons/method.vue'
+import MethodSelector from './buttons/MethodSelector.vue'
 
 const props = defineProps({
   modelValue: Object
@@ -15,7 +15,7 @@ const local = computed({
 
 <template>
   <div class="flex flex-row gap-1 w-full">
-    <Method v-model="local.method" />
+    <MethodSelector v-model="local.method" />
     <input class="url" v-model="local.url" placeholder="http://localhost:4321/fetch-it" type="url" />
   </div>
 </template>

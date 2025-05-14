@@ -6,7 +6,7 @@ import DisplayResponse from './components/DisplayResponse.vue'
 import { callFetch } from './core/fetchIt.ts'
 import type { Header, Options, ResponseToDisplay } from './core/interfaces.ts'
 import Send from './components/buttons/Send.vue'
-import cURL from './components/buttons/cURL.vue'
+import GeneratecURL from './components/buttons/GeneratecURL.vue'
 import { generateCurl } from './core/generateCurl.ts'
 import DisplayCurl from './components/DisplayCurl.vue'
 
@@ -68,7 +68,7 @@ const submitCurl = () => {
     <h1>Fetch It</h1>
     <div class="flex flex-row h-8 gap-2">
       <Send @click="submitFetch" />
-      <cURL @click="submitCurl" />
+      <GeneratecURL @click="submitCurl" />
     </div>
     <div class="flex flex-col gap-5 w-full px-7">
         <UrlForm v-model="urlFormData" />
