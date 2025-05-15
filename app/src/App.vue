@@ -14,6 +14,12 @@ const urlFormData = ref<Record<string, any>>({method: 'GET'})
 const headersFormData = ref<Header[]>([])
 const responseToDisplay = ref<ResponseToDisplay | undefined>(undefined)
 const generatedCurl = ref<string[] | string | undefined>(undefined)
+const isFormDisplayed = ref<boolean>(false)
+const display = ref<string>('response')
+
+const handleConfigBtnClick = () => {
+  isFormDisplayed.value = !isFormDisplayed.value
+}
 
 const getFormData = (): Options => {
   const headers: Header[] = headersFormData.value
@@ -30,7 +36,8 @@ const getFormData = (): Options => {
 }
 
 const submitFetch = async () => {
-  generatedCurl.value = undefined
+  isFormDisplayed.value = false
+  display.value = 'response'
 
   try {
     const options = getFormData()
@@ -43,7 +50,8 @@ const submitFetch = async () => {
 }
 
 const submitCurl = () => {
-  responseToDisplay.value = undefined
+  isFormDisplayed.value = false
+  display.value = 'curl'
 
   try {
     const options = getFormData()
@@ -57,35 +65,49 @@ const submitCurl = () => {
 
 </script>
 
-
 <template>
-  <body>
+  <main>
     <h1>Fetch It</h1>
     <div class="flex flex-row h-8 gap-2">
       <Send @click="submitFetch" />
       <GeneratecURL @click="submitCurl" />
     </div>
     <div class="flex flex-col gap-5 w-full px-7">
+      <div class="w-full flex gap-4 flex-row">
+        <button class="configBtn" @click="handleConfigBtnClick" >
+          <i :class="['pi', isFormDisplayed ? 'pi-times': 'pi-cog']"></i>
+        </button>
         <UrlForm v-model="urlFormData" />
-        <HeadersForm v-model="headersFormData" />
+      </div>
+        <div v-if="isFormDisplayed" >
+          <HeadersForm v-model="headersFormData" />
+        </div>
     </div>
     <span class="w-4/5 h-0.5 bg-stone-900"></span>
-    <DisplayCurl :curl="generatedCurl" />
-    <DisplayResponse :response="responseToDisplay" />
-  </body>
+    <div>
+    </div>
+    <DisplayCurl v-if="display === 'curl'" :curl="generatedCurl" />
+    <DisplayResponse v-if="display === 'response'" :response="responseToDisplay" />
+  </main>
 </template>
 
 <style>
 @import "tailwindcss";
 
 @layer base {
-  body {
-    @apply bg-stone-800 text-gray-50 flex flex-col gap-5 items-center w-screen overflow-hidden max-h-screen pt-7
+  main {
+    @apply bg-stone-800 text-gray-50 flex flex-col gap-5 overflow-y-hidden items-center max-w-screen overflow-hidden min-h-screen pt-7
   }
 
   h1 {
     @apply text-7xl font-extrabold
   }
-
 }
+
+@layer components {
+  .configBtn {
+    @apply cursor-pointer border-stone-600 border-1 hover:text-gray-200 hover:border-gray-200 text-stone-400 font-bold py-2 px-4 rounded inline-flex items-center
+  }
+}
+
 </style>

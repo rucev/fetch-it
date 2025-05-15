@@ -39,7 +39,7 @@ const removeHeader = (index: number) => {
       />
       <button @click="removeHeader(index)" class="text-red-800 hover:text-red-500"><i class="pi pi-trash text-xl"></i></button>
     </div>
-    <button @click="addHeader" class="bg-stone-500 hover:bg-stone-700 text-stone-50 font-bold py-2 px-4 rounded inline-flex items-center">+ Add Header</button>
+    <button @click="addHeader" class="bg-stone-500 hover:bg-stone-700 text-stone-50 font-bold py-2 px-4 rounded inline-flex items-center w-full md:w-1/3">+ Add Header</button>
   </div>
 </template>
 <style scoped>
