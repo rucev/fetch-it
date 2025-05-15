@@ -43,7 +43,11 @@ export const callFetch = async (options: Options): Promise<ResponseToDisplay> =>
     const headers: HeadersInit | undefined = options.headers
         ? Object.fromEntries(options.headers.map(header => [header.name, header.value]))
         : undefined
-    const body: any = options.body ? JSON.stringify(options.body) : undefined
+    let body: any = undefined
+
+    if (options.body) {
+        body = options.body.type === 'json' ? JSON.stringify(options.body.content) : options.body.content
+    }
 
     const res = await fetch(url, {
         method,

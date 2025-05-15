@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, toRaw } from 'vue'
 import UrlForm from './components/UrlForm.vue'
 import HeadersForm from './components/HeadersForm.vue'
 import DisplayResponse from './components/DisplayResponse.vue'
+import BodyForm from './components/BodyForm.vue'
 import { callFetch } from './core/fetchIt.ts'
-import type { Header, Options, ResponseToDisplay } from './core/interfaces.ts'
+import type { BodyInfo, Header, Options, ResponseToDisplay } from './core/interfaces.ts'
 import Send from './components/buttons/Send.vue'
 import GeneratecURL from './components/buttons/GeneratecURL.vue'
 import { generateCurl } from './core/generateCurl.ts'
@@ -16,10 +17,7 @@ const responseToDisplay = ref<ResponseToDisplay | undefined>(undefined)
 const generatedCurl = ref<string[] | string | undefined>(undefined)
 const isFormDisplayed = ref<boolean>(false)
 const display = ref<string>('response')
-
-const handleConfigBtnClick = () => {
-  isFormDisplayed.value = !isFormDisplayed.value
-}
+const bodyFormData = ref<BodyInfo | undefined>(undefined)
 
 const getFormData = (): Options => {
   const headers: Header[] = headersFormData.value
@@ -30,13 +28,13 @@ const getFormData = (): Options => {
       url: urlFormData.value.url,
       method: urlFormData.value.method,
       headers,
+      body: toRaw(bodyFormData.value)
     }
 
     return options
 }
 
 const submitFetch = async () => {
-  isFormDisplayed.value = false
   display.value = 'response'
 
   try {
@@ -50,7 +48,6 @@ const submitFetch = async () => {
 }
 
 const submitCurl = () => {
-  isFormDisplayed.value = false
   display.value = 'curl'
 
   try {
@@ -74,13 +71,14 @@ const submitCurl = () => {
     </div>
     <div class="flex flex-col gap-5 w-full px-7">
       <div class="w-full flex gap-4 flex-row">
-        <button class="configBtn" @click="handleConfigBtnClick" >
+        <button class="configBtn" @click="isFormDisplayed = !isFormDisplayed" >
           <i :class="['pi', isFormDisplayed ? 'pi-times': 'pi-cog']"></i>
         </button>
         <UrlForm v-model="urlFormData" />
       </div>
-        <div v-if="isFormDisplayed" >
+        <div v-if="isFormDisplayed" class="flex flex-col gap-2">
           <HeadersForm v-model="headersFormData" />
+          <BodyForm v-model="bodyFormData" />
         </div>
     </div>
     <span class="w-4/5 h-0.5 bg-stone-900"></span>

@@ -1,4 +1,4 @@
-import type { Header, HTTPMethod, Options } from '../interfaces.ts'
+import type { BodyTypeOptions, Header, HTTPMethod, Options } from '../interfaces.ts'
 
 
 export const isValidHeader = (header: Header): boolean => {
@@ -22,12 +22,37 @@ export const isValidHttpUrl = (url: string): boolean => {
     else return false
 }
 
+export const isValidBody = (body: any, type: BodyTypeOptions | undefined): boolean => {
+    const text = typeof body === 'string' ? body.trim() : ''
+
+    if (body === undefined) return true
+
+    try {
+        switch (type) {
+            case 'json':
+                if (typeof body === 'object') return true
+                JSON.parse(text)
+                return true
+            case 'xml':
+                return /^<.+>/.test(text)
+            case 'text':
+                return true
+            default:
+                return false
+        }
+    } catch {
+        return false
+    }
+}
+
+
 export const isValidOptions = (options: Options): boolean => {
     const methods: HTTPMethod[] = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS']
     return (
         isValidHttpUrl(options.url) &&
         methods.includes(options.method) &&
-        areValidHeaders(options.headers)
+        areValidHeaders(options.headers) &&
+        isValidBody(options.body?.content, options.body?.type)
     )
 }
 

@@ -12,10 +12,18 @@ export interface ResponseToDisplay {
 
 export type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD' | 'OPTIONS'
 
+export type BodyTypeOptions = 'json' | 'text' | 'xml'
+
+export interface BodyInfo {
+    content: string | object | undefined;
+    type: BodyTypeOptions;
+}
+
 export interface Options {
     url: string;
     headers?: Header[] | undefined;
     method: HTTPMethod;
-    body?: any
+    body?: BodyInfo
 }
+
 

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { HTTPMethod } from '../../core/interfaces';
+import type { BodyTypeOptions } from '../../core/interfaces';
 
-const props = defineProps<{ modelValue: HTTPMethod }>()
+const props = defineProps<{ modelValue: BodyTypeOptions }>()
 const emit = defineEmits(['update:modelValue'])
 
 const selected = computed({
@@ -13,13 +13,9 @@ const selected = computed({
 
 <template>
   <select v-model="selected" class="dropdown">
-    <option value="GET">GET</option>
-    <option value="POST">POST</option>
-    <option value="PUT">PUT</option>
-    <option value="DELETE">DELETE</option>
-    <option value="PATCH">PATCH</option>
-    <option value="HEAD">HEAD</option>
-    <option value="OPTIONS">OPTIONS</option>
+    <option value="json">JSON</option>
+    <option value="text">Text</option>
+    <option value="xml">XML</option>
   </select>
 </template>
 

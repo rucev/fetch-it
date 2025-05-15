@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { Header } from '../core/interfaces' // Adjust path as needed
+import type { Header } from '../core/interfaces'
 
 const props = defineProps<{
   modelValue: Header[]
 }>()
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', value: Header[]): void
+  (event: 'update:modelValue', value: Header[]): void
 }>()
 
 const local = computed({

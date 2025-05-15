@@ -14,35 +14,40 @@ export const generateCurl = (options: Options, isVerbose: boolean): string[] => 
         })
     }
 
-    if (options.body) {
-        const contentTypeHeader = options.headers?.find(header => header.name.toLowerCase() === 'content-type')?.value
+    if (options.body && typeof options.body === 'object' && 'type' in options.body && 'content' in options.body) {
+        const { type, content } = options.body
 
-        let dataPayload: string
+        let formattedBody: string | undefined
 
-        if (contentTypeHeader?.includes('application/json')) {
-            dataPayload = JSON.stringify(options.body)
-        } else if (contentTypeHeader?.includes('application/x-www-form-urlencoded')) {
-            dataPayload = new URLSearchParams(options.body).toString()
-        } else if (contentTypeHeader?.includes('multipart/form-data')) {
-            Object.entries(options.body).forEach(([key, value]) => {
-                cUrlLines.push(`-F "${key}=${value}"`)
-            })
-            dataPayload = ''
-        } else {
-            dataPayload = String(options.body)
+        switch (type) {
+            case 'json':
+                try {
+                    const json = typeof content === 'string' ? JSON.parse(content) : content
+                    formattedBody = JSON.stringify(json)
+                } catch {
+                    formattedBody = typeof content === 'string' ? content : JSON.stringify(content)
+                }
+                break
+
+            case 'text':
+            case 'xml':
+                formattedBody = typeof content === 'string' ? content : String(content)
+                break
+
+            default:
+                formattedBody = undefined
         }
 
-        if (dataPayload) {
-            cUrlLines.push(`-d '${dataPayload}' \\`)
+        if (formattedBody) {
+            cUrlLines.push(`-d '${formattedBody}' \\`)
         }
     }
 
-    const lastIndex = cUrlLines.length - 1;
-
-    cUrlLines[lastIndex] = cUrlLines[lastIndex].slice(0, -2);
+    const lastIndex = cUrlLines.length - 1
+    cUrlLines[lastIndex] = cUrlLines[lastIndex].replace(/\\$/, '')
 
     if (isVerbose) {
-        cUrlLines[lastIndex] = `${cUrlLines[lastIndex]} -v`
+        cUrlLines[lastIndex] += ' -v'
     }
 
     return cUrlLines
