@@ -5,7 +5,6 @@ const props = defineProps<{
   curl?: string[] | string
 }>()
 
-// Compute if curl is an array and return it
 const isArrayCurl = computed(() => Array.isArray(props.curl))
 const curlArray = computed(() => (Array.isArray(props.curl) ? props.curl : [props.curl]))
 </script>

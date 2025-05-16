@@ -12,7 +12,7 @@ export interface ResponseToDisplay {
 
 export type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD' | 'OPTIONS'
 
-export type BodyTypeOptions = 'json' | 'text' | 'xml'
+export type BodyTypeOptions = 'json' | 'xml' | 'text'
 
 export interface BodyInfo {
     content: string | object | undefined;

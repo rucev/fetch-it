@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import BodyTypeSelector from './buttons/BodyTypeSelector.vue'
+import BodyTypeSelector from './inputs/BodyTypeSelector.vue'
 import type { BodyTypeOptions } from '../core/interfaces'
 import { isValidBody } from '../core/validators/options';
 
@@ -18,7 +18,7 @@ const validateSyntax = (text: string, type: BodyTypeOptions): [boolean | null, s
   if (!text.trim()) return [null]
 
   try {
-    const isValid = isValidBody(text, type)
+    const isValid = isValidBody(text, type, undefined)
     return [isValid]
   } catch (error: any) {
     return [false, error.message || 'Invalid syntax']
@@ -50,7 +50,7 @@ const placeholderText = computed(() => {
     case 'json':
       return '{\n  "key": "value"\n}'
     case 'xml':
-      return `<?xml version="1.0" encoding="UTF-8"?>\n<note>\n  <to>User</to>\n  <from>ChatGPT</from>\n</note>`
+      return `<?xml version="1.0" encoding="UTF-8"?>\n<note>\n  <to>API</to>\n  <from>Fetch It</from>\n</note>`
     case 'text':
     default:
       return 'Write plain text here...'
@@ -93,5 +93,6 @@ const placeholderText = computed(() => {
   .btn {
     @apply cursor-pointer bg-stone-500 hover:bg-stone-700 text-stone-50 font-bold py-2 px-4 rounded inline-flex items-center w-full md:w-1/3
   }
+
 }
 </style>

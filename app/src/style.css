@@ -1,2 +1,12 @@
 @import "tailwindcss";
 @import 'primeicons/primeicons.css';
+
+@layer components {
+    .dropdown {
+        @apply border-stone-600 border-1 w-42 cursor-pointer flex flex-row justify-center items-center rounded-md py-1.5 pr-7 pl-3 text-base text-stone-200 placeholder:text-stone-400 placeholder:bg-stone-900 focus:outline-2 focus:-outline-offset-2 focus:outline-stone-950 sm:text-sm/6
+    }
+
+    select option {
+        @apply cursor-pointer bg-stone-900
+    }
+}

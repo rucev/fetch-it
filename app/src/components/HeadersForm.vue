@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { Header } from '../core/interfaces'
+import HeadersNameSelector from './inputs/HeadersNameSelector.vue'
+import HeadersValueSelector from './inputs/HeadersValueSelector.vue'
 
 const props = defineProps<{
   modelValue: Header[]
@@ -12,34 +14,52 @@ const emit = defineEmits<{
 
 const local = computed({
   get: () => props.modelValue,
-  set: value => emit('update:modelValue', value)
+  set: (value) => emit('update:modelValue', value),
 })
 
 const addHeader = () => {
-  local.value.push({ name: '', value: '' })
+  local.value = [...local.value, { name: '', value: '' }]
 }
 
 const removeHeader = (index: number) => {
-  local.value.splice(index, 1)
+  local.value = local.value.filter((_, i) => i !== index)
+}
+
+const updateHeaderName = (index: number, newName: string) => {
+  const updated = [...local.value]
+  updated[index] = { ...updated[index], name: newName }
+  local.value = updated
+}
+
+const updateHeaderValue = (index: number, newValue: string) => {
+  const updated = [...local.value]
+  updated[index] = { ...updated[index], value: newValue }
+  local.value = updated
 }
 </script>
 
 <template>
   <div class="flex flex-col gap-2">
     <div v-for="(header, index) in local" :key="index" class="flex flex-row gap-2 items-center">
-      <input
-        v-model="header.name"
-        placeholder="Header Name"
-        class="px-2 py-1 rounded bg-stone-800 text-white"
+      <HeadersNameSelector
+        :modelValue="header.name"
+        @update:modelValue="(value: string) => updateHeaderName(index, value)"
       />
-      <input
-        v-model="header.value"
-        placeholder="Header Value"
-        class="px-2 py-1 rounded bg-stone-800 text-white"
+      <HeadersValueSelector
+        :headerName="header.name"
+        :modelValue="header.value"
+        @update:modelValue="(value: string) => updateHeaderValue(index, value)"
       />
-      <button @click="removeHeader(index)" class="text-red-800 hover:text-red-500"><i class="pi pi-trash text-xl"></i></button>
+      <button @click="removeHeader(index)" class="text-red-800 hover:text-red-500">
+        <i class="pi pi-trash text-xl"></i>
+      </button>
     </div>
-    <button @click="addHeader" class="bg-stone-500 hover:bg-stone-700 text-stone-50 font-bold py-2 px-4 rounded inline-flex items-center w-full md:w-1/3">+ Add Header</button>
+    <button
+      @click="addHeader"
+      class="bg-stone-500 hover:bg-stone-700 text-stone-50 font-bold py-2 px-4 rounded inline-flex items-center w-full md:w-1/3"
+    >
+      + Add Header
+    </button>
   </div>
 </template>
 <style scoped>
