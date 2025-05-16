@@ -22,10 +22,16 @@ export const isValidHttpUrl = (url: string): boolean => {
     else return false
 }
 
-export const isValidBody = (body: any, type: BodyTypeOptions | undefined): boolean => {
+export const doesMethodAcceptBody = (method: HTTPMethod): boolean => {
+    if (method === 'GET' || method === 'HEAD' || method === 'OPTIONS') return false
+    else return true
+}
+
+export const isValidBody = (body: any, type: BodyTypeOptions | undefined, method: HTTPMethod | undefined): boolean => {
     const text = typeof body === 'string' ? body.trim() : ''
 
     if (body === undefined) return true
+    if (method && !doesMethodAcceptBody(method)) return false
 
     try {
         switch (type) {
@@ -52,7 +58,7 @@ export const isValidOptions = (options: Options): boolean => {
         isValidHttpUrl(options.url) &&
         methods.includes(options.method) &&
         areValidHeaders(options.headers) &&
-        isValidBody(options.body?.content, options.body?.type)
+        isValidBody(options.body?.content, options.body?.type, options.method)
     )
 }
 

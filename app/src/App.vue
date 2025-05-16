@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, toRaw } from 'vue'
+import { computed, ref, toRaw } from 'vue'
 import UrlForm from './components/UrlForm.vue'
 import HeadersForm from './components/HeadersForm.vue'
 import DisplayResponse from './components/DisplayResponse.vue'
@@ -10,6 +10,7 @@ import Send from './components/buttons/Send.vue'
 import GeneratecURL from './components/buttons/GeneratecURL.vue'
 import { generateCurl } from './core/generateCurl.ts'
 import DisplayCurl from './components/DisplayCurl.vue'
+import { doesMethodAcceptBody } from './core/validators/options.ts'
 
 const urlFormData = ref<Record<string, any>>({method: 'GET'})
 const headersFormData = ref<Header[]>([])
@@ -18,6 +19,10 @@ const generatedCurl = ref<string[] | string | undefined>(undefined)
 const isFormDisplayed = ref<boolean>(false)
 const display = ref<string>('response')
 const bodyFormData = ref<BodyInfo | undefined>(undefined)
+
+const methodAcceptsBody = computed(() => 
+  doesMethodAcceptBody(urlFormData.value.method)
+)
 
 const getFormData = (): Options => {
   const headers: Header[] = headersFormData.value
@@ -78,7 +83,7 @@ const submitCurl = () => {
       </div>
         <div v-if="isFormDisplayed" class="flex flex-col gap-2">
           <HeadersForm v-model="headersFormData" />
-          <BodyForm v-model="bodyFormData" />
+          <BodyForm v-if="methodAcceptsBody" v-model="bodyFormData" />
         </div>
     </div>
     <span class="w-4/5 h-0.5 bg-stone-900"></span>
