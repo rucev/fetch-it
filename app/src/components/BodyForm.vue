@@ -63,7 +63,7 @@ const placeholderText = computed(() => {
     + Add Body
   </button>
   <div v-if="isBodyActive" class="flex flex-col gap-2 w-full">
-    <div class="flex justify-between items-center">
+    <div class="flex justify-between items-center gap-5">
       <BodyTypeSelector v-model="selectedBodyType" />
       <button @click="isBodyActive = false" class="btn">
         - Remove Body
