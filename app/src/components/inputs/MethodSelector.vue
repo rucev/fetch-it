@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { HTTPMethod } from '../../core/interfaces';
+import type { HTTPMethod } from '../../interfaces/types';
 
 const props = defineProps<{ modelValue: HTTPMethod }>()
 const emit = defineEmits(['update:modelValue'])

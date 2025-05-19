@@ -1,5 +1,5 @@
-import type { Options } from './interfaces'
-import { isValidOptions } from './validators/options'
+import type { Options } from '../interfaces/interfaces'
+import { isValidOptions } from '../validators/options'
 
 export const generateCurl = (options: Options, isVerbose: boolean): string[] => {
     if (!isValidOptions(options)) throw new Error('Invalid options')

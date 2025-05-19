@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
-import { HEADER_VALUES } from '../../core/constants/headerValues'
+import { HEADER_VALUES } from '../../constants/headerValues'
 
 const props = defineProps<{
   modelValue: string,

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import BodyTypeSelector from './inputs/BodyTypeSelector.vue'
-import type { BodyTypeOptions } from '../core/interfaces'
-import { isValidBody } from '../core/validators/options';
+import type { BodyTypeOptions } from '../interfaces/types'
+import { isValidBody } from '../validators/options';
 
 const emit = defineEmits<{
   (event: 'update:modelValue', value: string | object | undefined): void

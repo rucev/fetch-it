@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { ResponseToDisplay } from '../core/interfaces.ts'
+import type { ResponseToDisplay } from '../interfaces/interfaces.ts'
 
 const props = defineProps<{
   response?: ResponseToDisplay

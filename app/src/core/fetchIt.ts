@@ -1,6 +1,6 @@
-import { HTTP_STATUS_MESSAGES } from './constants/httpsStatusMessages'
-import type { Header, Options, ResponseToDisplay } from './interfaces'
-import { isValidOptions } from './validators/options'
+import { HTTP_STATUS_MESSAGES } from '../constants/httpsStatusMessages'
+import type { Header, Options, ResponseToDisplay } from '../interfaces/interfaces'
+import { isValidOptions } from '../validators/options'
 
 export const formatResponse = async (response: Response): Promise<ResponseToDisplay> => {
     const headers: Header[] = []

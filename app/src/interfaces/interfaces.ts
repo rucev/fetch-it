@@ -1,3 +1,5 @@
+import type { BodyTypeOptions, HTTPMethod } from "./types";
+
 export interface Header {
     name: string;
     value: string;
@@ -9,10 +11,6 @@ export interface ResponseToDisplay {
     statusCode: number;
     statusMsg: string;
 }
-
-export type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD' | 'OPTIONS'
-
-export type BodyTypeOptions = 'json' | 'xml' | 'text'
 
 export interface BodyInfo {
     content: string | object | undefined;
@@ -26,4 +24,24 @@ export interface Options {
     body?: BodyInfo
 }
 
+export interface fetchRequest {
+    method: HTTPMethod;
+    url: string;
+    headers: Header[]
+    body: BodyInfo | undefined
+}
+
+export interface fetchResponse {
+    status: string;
+    code: number;
+    headers: Header[];
+    body: string | undefined
+}
+
+export interface fetchCall {
+    name: string,
+    fetchId: string,
+    request: fetchRequest;
+    response: fetchResponse;
+}
 

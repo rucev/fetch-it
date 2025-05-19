@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { HEADER_NAMES } from '../../core/constants/headerNames'
+import { HEADER_NAMES } from '../../constants/headerNames'
 
 const emit = defineEmits(['update:modelValue'])
 const props = defineProps<{ modelValue: string }>()

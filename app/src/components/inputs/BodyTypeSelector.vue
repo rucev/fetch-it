@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { BodyTypeOptions } from '../../core/interfaces';
+import type { BodyTypeOptions } from '../../interfaces/types';
 
 const props = defineProps<{ modelValue: BodyTypeOptions }>()
 const emit = defineEmits(['update:modelValue'])

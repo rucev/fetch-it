@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { Header } from '../core/interfaces'
+import type { Header } from '../interfaces/interfaces'
 import HeadersNameSelector from './inputs/HeadersNameSelector.vue'
 import HeadersValueSelector from './inputs/HeadersValueSelector.vue'
 

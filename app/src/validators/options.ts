@@ -1,4 +1,5 @@
-import type { BodyTypeOptions, Header, HTTPMethod, Options } from '../interfaces.ts'
+import type { Header, Options } from '../interfaces/interfaces'
+import type { HTTPMethod, BodyTypeOptions } from '../interfaces/types'
 
 
 export const isValidHeader = (header: Header): boolean => {
