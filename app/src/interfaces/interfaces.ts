@@ -1,12 +1,24 @@
 import type { BodyTypeOptions, HTTPMethod } from "./types";
 
-export interface Header {
-    name: string;
-    value: string;
+export interface HeaderRequest {
+    name: {
+        isCustom: boolean,
+        content: string
+    };
+    value: {
+        isCustom: boolean,
+        content: string
+    };
 }
 
+export interface HeaderResponse {
+    name: string,
+    value: string
+}
+
+
 export interface ResponseToDisplay {
-    headers: Header[] | undefined;
+    headers: HeaderResponse[] | undefined;
     body: string | object | undefined;
     statusCode: number;
     statusMsg: string;
@@ -19,7 +31,7 @@ export interface BodyInfo {
 
 export interface Options {
     url: string;
-    headers?: Header[] | undefined;
+    headers?: HeaderRequest[] | undefined;
     method: HTTPMethod;
     body?: BodyInfo
 }
@@ -27,14 +39,14 @@ export interface Options {
 export interface fetchRequest {
     method: HTTPMethod;
     url: string;
-    header: Header[] | undefined
+    header: HeaderRequest[] | undefined
     body: BodyInfo | undefined
 }
 
 export interface fetchResponse {
     status: string;
     code: number;
-    header: Header[] | undefined;
+    header: HeaderResponse[] | undefined;
     body: string | undefined
 }
 

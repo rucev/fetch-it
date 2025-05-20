@@ -1,29 +1,28 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
-import { HEADER_NAMES } from '../../constants/headerNames'
+  import { computed, ref, watch } from 'vue'
+  import { HEADER_NAMES } from '../../constants/headerNames'
 
-const emit = defineEmits(['update:modelValue'])
-const props = defineProps<{ modelValue: string }>()
+  const emit = defineEmits(['update:modelValue'])
+  const props = defineProps<{ modelValue: { isCustom: boolean; content: string } }>()
 
-const localValue = ref(props.modelValue)
-const isCustom = ref(false)
+  const isCustom = ref<boolean>(props.modelValue.isCustom ? true : false)
+  const localValue = ref<string>(props.modelValue.content)
 
-watch(() => props.modelValue, (newVal) => {
-  localValue.value = newVal
-})
+  watch([localValue, isCustom], () => {
+    emit('update:modelValue', {
+      content: localValue.value,
+      isCustom: isCustom.value,
+    })
+  })
 
-watch(localValue, (val) => {
-  emit('update:modelValue', val)
-})
+  const selected = computed({
+    get: () => localValue.value,
+    set: (value) => localValue.value = value,
+  })
 
-const selected = computed({
-  get: () => props.modelValue,
-  set: (value) => emit('update:modelValue', value),
-})
-
-const toggleInputMode = () => {
-  isCustom.value = !isCustom.value
-}
+  const toggleInputMode = () => {
+    isCustom.value = !isCustom.value
+  }
 </script>
 
 <template>
@@ -51,20 +50,19 @@ const toggleInputMode = () => {
     </div>
   </div>
 </template>
+
 <style scoped>
   @import "tailwindcss";
 
-  @layer components {
-    .dropdown {
-      @apply w-full py-2
-    }
+  .dropdown {
+    @apply w-full py-2
+  }
 
-    input {
-      @apply w-full border-stone-600 border-1 rounded-md py-1.5 pr-7 pl-3 text-base text-stone-200 placeholder:text-stone-400 focus:outline-2 focus:-outline-offset-2 focus:outline-stone-950 sm:text-sm/6
-    }
+  input {
+    @apply w-full border-stone-600 border-1 rounded-md py-1.5 pr-7 pl-3 text-base text-stone-200 placeholder:text-stone-400 focus:outline-2 focus:-outline-offset-2 focus:outline-stone-950 sm:text-sm/6
+  }
 
-    button{
-      cursor: pointer;
-    }
+  button{
+    cursor: pointer;
   }
 </style>

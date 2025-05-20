@@ -1,53 +1,57 @@
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue'
-import { HEADER_VALUES } from '../../constants/headerValues'
+  import { ref, watch, computed } from 'vue'
+  import { HEADER_VALUES } from '../../constants/headerValues'
 
-const props = defineProps<{
-  modelValue: string,
-  headerName: string | undefined
-}>()
+  const props = defineProps<{
+    modelValue: { isCustom: boolean; content: string },
+    headerName: { isCustom: boolean; content: string } | undefined
+  }>()
 
-const localValue = ref(props.modelValue)
-const isCustom = ref(false)
+  const emit = defineEmits<{
+    (event: 'update:modelValue', val: { isCustom: boolean; content: string }): void
+  }>()
 
-watch(() => props.modelValue, (val) => {
-  localValue.value = val
-})
+  const isCustom = ref<boolean>(props.modelValue.isCustom ? true : false)
+  const localValue = ref<string>(props.modelValue.content)
 
-const emit = defineEmits<{
-  (event: 'update:modelValue', val: string): void
-}>()
+  watch(() => props.modelValue, (val) => {
+    localValue.value = val.content
+    isCustom.value = val.isCustom
+  })
 
-watch(localValue, (val) => {
-  emit('update:modelValue', val)
-})
+  watch([localValue, isCustom], () => {
+    emit('update:modelValue', {
+      content: localValue.value,
+      isCustom: isCustom.value,
+    })
+  })
 
-watch(() => props.headerName, (newName) => {
-  let defaultVal;
-  if(newName) defaultVal = HEADER_VALUES[newName]
-  if (typeof defaultVal === 'string') {
-    localValue.value = ''
-    isCustom.value = true
-  } else if (Array.isArray(defaultVal) && defaultVal.length > 0) {
-    localValue.value = defaultVal[0]
-    isCustom.value = false
-  } else {
-    localValue.value = ''
-    isCustom.value = false
+  const defaultValues = computed(() => {
+    if (props.headerName?.content) {
+      return HEADER_VALUES[props.headerName.content]
+    }
+    return 'Set your header value here'
+  })
+
+  watch(() => props.headerName?.content, (newName) => {
+    const defaultVal = newName ? HEADER_VALUES[newName] : undefined
+
+    if (typeof defaultVal === 'string') {
+      localValue.value = props.modelValue.content ? props.modelValue.content : ''
+      isCustom.value = true
+    } else if (Array.isArray(defaultVal) && defaultVal.length > 0) {
+      localValue.value = defaultVal[0]
+      isCustom.value = false
+    } else {
+      localValue.value = props.modelValue.content ? props.modelValue.content : ''
+      isCustom.value = true
+    }
+  }, { immediate: true })
+
+  const toggleInputMode = () => {
+    if (isCustom.value === true) localValue.value = ''
+    isCustom.value = !isCustom.value
   }
-}, { immediate: true })
-
-const defaultValues = computed(() => {
-  let values: string | string[]
-  if(props.headerName) values = HEADER_VALUES[props.headerName]
-  else values = 'Set your header value here'
-  return values
-})
-
-const toggleInputMode = () => {
-  if (isCustom.value === true) localValue.value = ''
-  isCustom.value = !isCustom.value
-}
 </script>
 
 <template>
@@ -77,19 +81,17 @@ const toggleInputMode = () => {
 </template>
 
 <style scoped>
-  @import "tailwindcss";
+@import "tailwindcss";
 
-  @layer components {
-    .dropdown {
-      @apply w-full py-2
-    }
+  .dropdown {
+    @apply w-full py-2
+  }
 
-    input {
-      @apply w-full border-stone-600 border-1 rounded-md py-1.5 pr-7 pl-3 text-base text-stone-200 placeholder:text-stone-400 focus:outline-2 focus:-outline-offset-2 focus:outline-stone-950 sm:text-sm/6
-    }
+  input {
+    @apply w-full border-stone-600 border-1 rounded-md py-1.5 pr-7 pl-3 text-base text-stone-200 placeholder:text-stone-400 focus:outline-2 focus:-outline-offset-2 focus:outline-stone-950 sm:text-sm/6
+  }
 
-    button{
-      cursor: pointer;
-    }
+  button{
+    cursor: pointer;
   }
 </style>

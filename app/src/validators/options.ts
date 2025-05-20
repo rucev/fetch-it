@@ -1,17 +1,17 @@
-import type { Header, Options } from '../interfaces/interfaces'
+import type { HeaderRequest, Options } from '../interfaces/interfaces'
 import type { HTTPMethod, BodyTypeOptions } from '../interfaces/types'
 
 
-export const isValidHeader = (header: Header): boolean => {
+export const isValidHeader = (header: HeaderRequest): boolean => {
     return (
-        typeof header.name === 'string' &&
-        header.name.trim().length > 0 &&
-        typeof header.value === 'string' &&
-        header.value.trim().length > 0
+        typeof header.name.content === 'string' &&
+        header.name.content.trim().length > 0 &&
+        typeof header.value.content === 'string' &&
+        header.value.content.trim().length > 0
     )
 }
 
-export const areValidHeaders = (headers: Header[] | null | undefined): boolean => {
+export const areValidHeaders = (headers: HeaderRequest[] | null | undefined): boolean => {
     if (!headers) return true
     if (!Array.isArray(headers)) return false
 

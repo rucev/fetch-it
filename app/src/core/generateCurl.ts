@@ -10,7 +10,7 @@ export const generateCurl = (options: Options, isVerbose: boolean): string[] => 
 
     if (options.headers) {
         options.headers.forEach(header => {
-            cUrlLines.push(`-H "${header.name}: ${header.value}" \\`)
+            cUrlLines.push(`-H "${header.name.content}: ${header.value.content}" \\`)
         })
     }
 

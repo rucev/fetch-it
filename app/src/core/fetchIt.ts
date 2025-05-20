@@ -1,9 +1,9 @@
 import { HTTP_STATUS_MESSAGES } from '../constants/httpsStatusMessages'
-import type { Header, Options, ResponseToDisplay } from '../interfaces/interfaces'
+import type { HeaderResponse, Options, ResponseToDisplay } from '../interfaces/interfaces'
 import { isValidOptions } from '../validators/options'
 
 export const formatResponse = async (response: Response): Promise<ResponseToDisplay> => {
-    const headers: Header[] = []
+    const headers: HeaderResponse[] = []
     response.headers.forEach((value, name) => {
         headers.push({ name, value })
     })
@@ -41,7 +41,7 @@ export const callFetch = async (options: Options): Promise<ResponseToDisplay> =>
     const url: string = options.url
     const method: string = options.method
     const headers: HeadersInit | undefined = options.headers
-        ? Object.fromEntries(options.headers.map(header => [header.name, header.value]))
+        ? Object.fromEntries(options.headers.map(header => [header.name.content, header.value.content]))
         : undefined
     let body: any = undefined
 
