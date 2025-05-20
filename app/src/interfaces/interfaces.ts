@@ -6,7 +6,7 @@ export interface Header {
 }
 
 export interface ResponseToDisplay {
-    headers: Header[];
+    headers: Header[] | undefined;
     body: string | object | undefined;
     statusCode: number;
     statusMsg: string;
@@ -27,14 +27,14 @@ export interface Options {
 export interface fetchRequest {
     method: HTTPMethod;
     url: string;
-    headers: Header[]
+    header: Header[] | undefined
     body: BodyInfo | undefined
 }
 
 export interface fetchResponse {
     status: string;
     code: number;
-    headers: Header[];
+    header: Header[] | undefined;
     body: string | undefined
 }
 
@@ -42,6 +42,5 @@ export interface fetchCall {
     name: string,
     fetchId: string,
     request: fetchRequest;
-    response: fetchResponse;
+    response: fetchResponse | undefined;
 }
-

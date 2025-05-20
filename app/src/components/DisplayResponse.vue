@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import type { ResponseToDisplay } from '../interfaces/interfaces.ts'
 
 const props = defineProps<{
   response?: ResponseToDisplay
 }>()
+
+watch(() => props.response, () => {})
+
 
 const formattedBody = computed(() => {
   if (!props.response) return ''

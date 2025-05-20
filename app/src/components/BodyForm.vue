@@ -3,6 +3,11 @@ import { computed, ref, watch } from 'vue'
 import BodyTypeSelector from './inputs/BodyTypeSelector.vue'
 import type { BodyTypeOptions } from '../interfaces/types'
 import { isValidBody } from '../validators/options';
+import type { BodyInfo } from '../interfaces/interfaces';
+
+const props = defineProps<{
+  body: BodyInfo | undefined
+}>()
 
 const emit = defineEmits<{
   (event: 'update:modelValue', value: string | object | undefined): void
@@ -13,6 +18,21 @@ const selectedBodyType = ref<BodyTypeOptions>('json')
 const inputText = ref<string>('')
 const isValid = ref<boolean | null>(null)
 const errorMessage = ref<string>('')
+
+import { onMounted } from 'vue'
+
+onMounted(() => {
+  if (props.body?.content) {
+    if (typeof props.body.content === 'object') {
+      inputText.value = JSON.stringify(props.body.content, null, 2)
+    } else {
+      inputText.value = props.body.content
+    }
+
+    selectedBodyType.value = props.body.type || 'json'
+    isBodyActive.value = true
+  }
+})
 
 const validateSyntax = (text: string, type: BodyTypeOptions): [boolean | null, string?] => {
   if (!text.trim()) return [null]
@@ -79,7 +99,9 @@ const placeholderText = computed(() => {
         'border-stone-600': isValid === null
       }"
       :placeholder="placeholderText"
-    ></textarea>
+    >
+      {{ props.body && props.body.content }}
+    </textarea>
 
     <p v-if="!isValid" class="text-red-500 text-sm font-medium">
       {{ errorMessage }}

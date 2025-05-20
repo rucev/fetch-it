@@ -12,11 +12,11 @@ export default class CallsRepository {
         }
     }
 
-    loadCalls(): fetchCall[] {
+    getAllCalls(): { name: string, fetchId: string }[] {
         try {
             const _previousCalls: string | null = localStorage.getItem('fetch-calls')
             const previousCalls: fetchCall[] = _previousCalls ? JSON.parse(_previousCalls) : []
-            return previousCalls;
+            return previousCalls.map(call => { return { name: call.name, fetchId: call.fetchId } });
         } catch (error) {
             throw new Error('Error loading previous calls');
         }

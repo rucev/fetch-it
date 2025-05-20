@@ -8,6 +8,7 @@ const props = defineProps<{
 }>()
 
 const localValue = ref(props.modelValue)
+const isCustom = ref(false)
 
 watch(() => props.modelValue, (val) => {
   localValue.value = val
@@ -20,7 +21,6 @@ const emit = defineEmits<{
 watch(localValue, (val) => {
   emit('update:modelValue', val)
 })
-const isCustom = ref(false)
 
 watch(() => props.headerName, (newName) => {
   let defaultVal;

@@ -1,31 +1,50 @@
 <script setup lang="ts">
-import { computed, ref, toRaw, watch } from 'vue'
+import { computed, nextTick, reactive, ref, toRaw, watch } from 'vue'
 import UrlForm from './components/UrlForm.vue'
 import HeadersForm from './components/HeadersForm.vue'
 import DisplayResponse from './components/DisplayResponse.vue'
 import BodyForm from './components/BodyForm.vue'
 import { callFetch } from './core/fetchIt.ts'
-import type { BodyInfo, Header, Options, ResponseToDisplay } from './interfaces/interfaces.ts'
+import type { BodyInfo, fetchCall, Header, Options, ResponseToDisplay } from './interfaces/interfaces.ts'
 import Send from './components/buttons/Send.vue'
 import GeneratecURL from './components/buttons/GeneratecURL.vue'
 import Footer from './components/Footer.vue'
+import LateralBar from './components/LateralBar.vue'
 import { generateCurl } from './core/generateCurl.ts'
 import DisplayCurl from './components/DisplayCurl.vue'
 import { doesMethodAcceptBody } from './validators/options.ts'
+import CallsRepository from './repository/CallsRepository.ts'
+import CallMapper from './repository/CallMapper.ts'
+import Save from './components/buttons/Save.vue'
 
 const urlFormData = ref<Record<string, any>>({method: 'GET'})
-const headersFormData = ref<Header[]>([])
-const responseToDisplay = ref<ResponseToDisplay | undefined>(undefined)
+let headersFormData = ref<Header[]>([])
+let responseToDisplay = ref<ResponseToDisplay | undefined>(undefined)
 const generatedCurl = ref<string[] | string | undefined>(undefined)
 const isFormDisplayed = ref<boolean>(false)
 const displayResponse = ref<boolean>(false)
 const displayCurl = ref<boolean>(false)
-const bodyFormData = ref<BodyInfo | undefined>(undefined)
+let bodyFormData = ref<BodyInfo | undefined>(undefined)
 
 const lastRequestSnapshot = ref<string>('')
 
+const callRepo = new CallsRepository()
+
+const canSave = computed(() => {
+  const hasUrl = !!urlFormData.value.url
+  const hasHeaders = headersFormData.value.length > 0
+  const hasBody = !!bodyFormData.value?.content
+  const hasResponse = !!responseToDisplay
+
+  return hasUrl && (hasHeaders || hasBody || hasResponse)
+})
+
+watch(canSave, (newVal) => {
+  console.log('canSave changed:', newVal)
+})
+
 watch(
-  [urlFormData, headersFormData, bodyFormData],
+  [urlFormData, headersFormData, bodyFormData, canSave],
   () => {
     const currentSnapshot = JSON.stringify(getFormData())
     if (currentSnapshot !== lastRequestSnapshot.value) {
@@ -78,15 +97,39 @@ const submitCurl = () => {
   }
 }
 
-</script>
+const loadCallById = (id: string) => {
+  const call = callRepo.loadCallById(id)
+  if (call) {
+    const [options, response] = CallMapper.toDomain(call)
+    urlFormData.value = { method: options.method, url: options.url }
+    headersFormData.value = options.headers || []
+    bodyFormData.value = options.body || undefined
 
+    displayResponse.value = false
+    nextTick(() => {
+      responseToDisplay.value = response
+      displayResponse.value = true
+    })
+  }
+}
+
+const saveCall = () => {
+  const options: Options = getFormData()
+  const res: ResponseToDisplay | undefined = responseToDisplay.value ?  toRaw(responseToDisplay.value) : undefined
+  const call: fetchCall = CallMapper.toPersistence(options, res)
+  callRepo.saveCall(call)
+}
+
+</script>
 <template>
   <main>
+    <LateralBar v-on:load-call="loadCallById"/>
     <div class="flex flex-col gap-5 overflow-y-hidden items-center w-full overflow-hidden h-full">
       <h1>Fetch It</h1>
       <div class="flex flex-row h-8 gap-2">
         <Send @click="submitFetch" />
         <GeneratecURL @click="submitCurl" />
+        <Save v-if="canSave" @click="saveCall" />
       </div>
       <div class="flex flex-col justify-center items-center gap-5 w-full">
         <div class="w-full max-w-[720px] flex gap-4 flex-row">
@@ -95,9 +138,9 @@ const submitCurl = () => {
           </button>
           <UrlForm v-model="urlFormData" />
         </div>
-          <div v-show="isFormDisplayed" class="flex flex-col gap-2 w-full md:px-7">
+          <div v-show="isFormDisplayed" class="flex flex-col gap-2 w-full">
             <HeadersForm v-model="headersFormData" />
-            <BodyForm v-if="methodAcceptsBody" v-model="bodyFormData" />
+            <BodyForm v-if="methodAcceptsBody" :body="bodyFormData" v-model="bodyFormData" />
           </div>
       </div>
       <span class="w-4/5 h-0.5 bg-stone-900"></span>

@@ -6,6 +6,7 @@ const emit = defineEmits(['update:modelValue'])
 const props = defineProps<{ modelValue: string }>()
 
 const localValue = ref(props.modelValue)
+const isCustom = ref(false)
 
 watch(() => props.modelValue, (newVal) => {
   localValue.value = newVal
@@ -14,8 +15,6 @@ watch(() => props.modelValue, (newVal) => {
 watch(localValue, (val) => {
   emit('update:modelValue', val)
 })
-
-const isCustom = ref(false)
 
 const selected = computed({
   get: () => props.modelValue,
