@@ -20,12 +20,12 @@ import { doesMethodAcceptBody } from './validators/options.ts'
 import CallsRepository from './repository/CallsRepository.ts'
 import CallMapper from './repository/CallMapper.ts'
 //Types & Interfaces
-import type { BodyInfo, fetchCall, Header, Options, ResponseToDisplay } from './interfaces/interfaces.ts'
+import type { BodyInfo, fetchCall, HeaderRequest, Options, ResponseToDisplay } from './interfaces/interfaces.ts'
 
 
 
 const urlFormData = ref<Record<string, any>>({method: 'GET'})
-let headersFormData = ref<Header[]>([])
+let headersFormData = ref<HeaderRequest[]>([])
 let responseToDisplay = ref<ResponseToDisplay | undefined>(undefined)
 const generatedCurl = ref<string[] | string | undefined>(undefined)
 const isFormDisplayed = ref<boolean>(false)
@@ -67,7 +67,7 @@ const methodAcceptsBody = computed(() =>
 )
 
 const getFormData = (): Options => {
-  const headers: Header[] = headersFormData.value
+  const headers: HeaderRequest[] = headersFormData.value
     .filter(header => header.name && header.value)
     .map(header => ({ name: header.name, value: header.value }))
 
