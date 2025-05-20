@@ -1,21 +1,28 @@
 <script setup lang="ts">
-import { computed, nextTick, reactive, ref, toRaw, watch } from 'vue'
+import { computed, nextTick, ref, toRaw, watch } from 'vue'
+//Components
 import UrlForm from './components/UrlForm.vue'
 import HeadersForm from './components/HeadersForm.vue'
 import DisplayResponse from './components/DisplayResponse.vue'
 import BodyForm from './components/BodyForm.vue'
-import { callFetch } from './core/fetchIt.ts'
-import type { BodyInfo, fetchCall, Header, Options, ResponseToDisplay } from './interfaces/interfaces.ts'
-import Send from './components/buttons/Send.vue'
-import GeneratecURL from './components/buttons/GeneratecURL.vue'
 import Footer from './components/Footer.vue'
 import LateralBar from './components/LateralBar.vue'
-import { generateCurl } from './core/generateCurl.ts'
 import DisplayCurl from './components/DisplayCurl.vue'
+//Buttons
+import Send from './components/buttons/Send.vue'
+import GeneratecURL from './components/buttons/GeneratecURL.vue'
+import Save from './components/buttons/Save.vue'
+import Reset from './components/buttons/Reset.vue'
+//Validators, Core Functions and Repository
+import { callFetch } from './core/fetchIt.ts'
+import { generateCurl } from './core/generateCurl.ts'
 import { doesMethodAcceptBody } from './validators/options.ts'
 import CallsRepository from './repository/CallsRepository.ts'
 import CallMapper from './repository/CallMapper.ts'
-import Save from './components/buttons/Save.vue'
+//Types & Interfaces
+import type { BodyInfo, fetchCall, Header, Options, ResponseToDisplay } from './interfaces/interfaces.ts'
+
+
 
 const urlFormData = ref<Record<string, any>>({method: 'GET'})
 let headersFormData = ref<Header[]>([])
@@ -87,6 +94,7 @@ const submitFetch = async () => {
 }
 
 const submitCurl = () => {
+  console.log(`click`)
   displayCurl.value = true
   try {
     const options = getFormData()
@@ -113,6 +121,16 @@ const loadCallById = (id: string) => {
   }
 }
 
+const resetCall = () => {
+  urlFormData.value = {method: 'GET'}
+  headersFormData.value = []
+  responseToDisplay.value = undefined
+  generatedCurl.value = undefined
+  displayResponse.value = false
+  displayCurl.value = false
+  bodyFormData.value = undefined
+}
+
 const saveCall = () => {
   const options: Options = getFormData()
   const res: ResponseToDisplay | undefined = responseToDisplay.value ?  toRaw(responseToDisplay.value) : undefined
@@ -124,12 +142,13 @@ const saveCall = () => {
 <template>
   <main>
     <LateralBar v-on:load-call="loadCallById"/>
-    <div class="flex flex-col gap-5 overflow-y-hidden items-center w-full overflow-hidden h-full">
+    <div class="flex flex-col gap-5 pt-5 overflow-y-hidden items-center w-full overflow-hidden h-full">
       <h1>Fetch It</h1>
-      <div class="flex flex-row h-8 gap-2">
-        <Send @click="submitFetch" />
-        <GeneratecURL @click="submitCurl" />
-        <Save v-if="canSave" @click="saveCall" />
+      <div class="flex flex-row min-h-8 h-fit justify-center gap-2 flex-wrap">
+        <Send :disabled="!canSave" :onClick="submitFetch" />
+        <GeneratecURL :disabled="!canSave" :onClick="submitCurl" />
+        <Save :disabled="!canSave" :onClick="saveCall" />
+        <Reset :disabled="!canSave" :onClick="resetCall" />
       </div>
       <div class="flex flex-col justify-center items-center gap-5 w-full">
         <div class="w-full max-w-[720px] flex gap-4 flex-row">

@@ -12,8 +12,8 @@
 <template>
     <button :disabled="props.disabled" :aria-disabled="props.disabled" @click="handleClick"
     :class="[props.disabled ? 'opacity-20 cursor-default' : 'cursor-pointer hover:bg-gray-400']">
-        <i class="pi pi-send text-xl"></i>
-        <span>Send</span>
+        <i class="pi pi-refresh text-xl"></i>
+        <span>Reset Form</span>
     </button>
 </template>
 <style scoped>
