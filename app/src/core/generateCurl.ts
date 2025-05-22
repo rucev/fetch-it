@@ -44,7 +44,7 @@ export const generateCurl = (options: Options, isVerbose: boolean): string[] => 
     }
 
     const lastIndex = cUrlLines.length - 1
-    cUrlLines[lastIndex] = cUrlLines[lastIndex].replace(/\\$/, '')
+    cUrlLines[lastIndex] = cUrlLines[lastIndex].replace(/\\$/, '').trim()
 
     if (isVerbose) {
         cUrlLines[lastIndex] += ' -v'
