@@ -1,5 +1,5 @@
-import type { fetchCall, fetchResponse, Options, ResponseToDisplay } from '../interfaces/interfaces.js'
-import { isValidOptions } from '../validators/options.js';
+import type { fetchCall, fetchResponse, Options, ResponseToDisplay } from '../interfaces/interfaces'
+import { isValidOptions } from '../validators/options';
 
 export default class CallMapper {
     static toPersistence(options: Options, res: ResponseToDisplay | undefined): fetchCall {
