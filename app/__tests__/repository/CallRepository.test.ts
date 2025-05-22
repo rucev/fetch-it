@@ -1,30 +1,33 @@
 import CallsRepository from '../../src/repository/CallsRepository'
 import type { Options, ResponseToDisplay, fetchCall } from '../../src/interfaces/interfaces'
-import { describe, expect, it, beforeEach, jest } from '@jest/globals'
+import { describe, expect, it, beforeEach, jest, afterEach } from '@jest/globals'
+
+const store: Record<string, string> = {}
+const mockLocalStorage: jest.Mocked<Storage> = {
+    getItem: jest.fn((key: string) => store[key] || null),
+    setItem: jest.fn((key: string, value: string) => { store[key] = value }),
+    removeItem: jest.fn((key: string) => { delete store[key] }),
+    clear: jest.fn(() => {
+        for (const key in store) delete store[key]
+    }),
+    key: jest.fn((index: number) => Object.keys(store)[index] || null),
+    get length() {
+        return Object.keys(store).length
+    },
+}
+
+global.localStorage = mockLocalStorage
 
 describe('CallsRepository', () => {
     let repo: CallsRepository
 
 
     beforeEach(() => {
-        const store: Record<string, string> = {}
-
-        const mockLocalStorage: jest.Mocked<Storage> = {
-            getItem: jest.fn((key: string) => store[key] || null),
-            setItem: jest.fn((key: string, value: string) => { store[key] = value }),
-            removeItem: jest.fn((key: string) => { delete store[key] }),
-            clear: jest.fn(() => {
-                for (const key in store) delete store[key]
-            }),
-            key: jest.fn((index: number) => Object.keys(store)[index] || null),
-            get length() {
-                return Object.keys(store).length
-            },
-        }
-
-        globalThis.localStorage = mockLocalStorage
-
         repo = new CallsRepository()
+    })
+
+    afterEach(() => {
+        jest.clearAllMocks()
     })
 
     const sampleCall: fetchCall = {

@@ -1,6 +1,6 @@
 import CallMapper from '../../src/repository/CallMapper'
 import type { Options, ResponseToDisplay, fetchCall } from '../../src/interfaces/interfaces'
-import { describe, expect, it, beforeEach, jest } from '@jest/globals'
+import { describe, expect, it, beforeEach, jest, afterEach } from '@jest/globals'
 
 //mock functions
 jest.mock('../../src/validators/options', () => ({
@@ -20,6 +20,10 @@ describe('CallMapper', () => {
     beforeEach(() => {
         (isValidOptions as jest.Mock).mockReset()
             ; (crypto.randomUUID as jest.Mock).mockReturnValue(mockUUID)
+    })
+
+    afterEach(() => {
+        jest.clearAllMocks()
     })
 
     describe('toPersistence', () => {
