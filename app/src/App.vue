@@ -8,11 +8,9 @@ import BodyForm from './components/BodyForm.vue'
 import Footer from './components/Footer.vue'
 import LateralBar from './components/LateralBar.vue'
 import DisplayCurl from './components/DisplayCurl.vue'
-//Buttons
-import Send from './components/buttons/Send.vue'
-import GeneratecURL from './components/buttons/GeneratecURL.vue'
-import Save from './components/buttons/Save.vue'
-import Reset from './components/buttons/Reset.vue'
+
+import MainBtn from './components/MainBtn.vue'
+
 //Validators, Core Functions and Repository
 import { callFetch } from './core/fetchIt.ts'
 import { generateCurl } from './core/generateCurl.ts'
@@ -145,10 +143,10 @@ const saveCall = () => {
     <div class="flex flex-col gap-5 pt-5 overflow-y-hidden items-center w-full overflow-hidden h-full">
       <h1>Fetch It</h1>
       <div class="flex flex-row min-h-8 h-fit justify-center gap-2 flex-wrap">
-        <Send :disabled="!canSave" :onClick="submitFetch" />
-        <GeneratecURL :disabled="!canSave" :onClick="submitCurl" />
-        <Save :disabled="!canSave" :onClick="saveCall" />
-        <Reset :disabled="!canSave" :onClick="resetCall" />
+        <MainBtn :disabled="!canSave" :onClick="submitFetch" text="Send" sr-only="Send API call" icon-class="pi-send" />
+        <MainBtn :disabled="!canSave" :onClick="submitCurl" text="cUrl" sr-only="Generate a cURL" icon-class="pi-code" />
+        <MainBtn :disabled="!canSave" :onClick="saveCall" text="Save" sr-only="Save call data" icon-class="pi-save" />
+        <MainBtn :disabled="!canSave" :onClick="resetCall" text="Reset Form" sr-only="Reset all inputs" icon-class="pi-refresh"/>
       </div>
       <div class="flex flex-col justify-center items-center gap-5 w-full">
         <div class="w-full max-w-[720px] flex gap-4 flex-row">
