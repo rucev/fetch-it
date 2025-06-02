@@ -1,5 +1,5 @@
 <template>
-  <footer class="mt-5 pb-2 w-full px-4">
+  <footer class="mt-5 pb-2 w-full px-4 flex flex-col items-center">
     <hr class="w-4/5 border-0 h-0.5 bg-stone-900 my-2" />
     <div class="flex flex-row items-center justify-between w-full">
       <a class="text-stone-400" href="https://github.com/rucev/fetch-it" target="_blank" rel="noopener" aria-label="Open Fetch It GitHub repository in a new tab">
