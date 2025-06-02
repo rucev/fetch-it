@@ -54,7 +54,7 @@
           <pre v-else>{{ props.curl }}</pre>
         </div>  
       </div>
-      <div class="self-end fixed mt-12 mr-2 flex flex-col items-center group" aria-live="assertive">
+      <div class="self-end fixed mt-12 mr-5 flex flex-col items-center group" aria-live="assertive">
         <button @click="copyToClipboard" class="copy-btn" aria-label="Copy cURL to clipboard">
           <i class="pi pi-copy"></i>
         </button>
