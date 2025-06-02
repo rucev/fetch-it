@@ -1,18 +1,8 @@
 <script setup lang="ts">
   import { computed, nextTick, ref, toRaw, watch } from 'vue'
-  //Components
-  import DisplayResponse from './components/DisplayResponse.vue'
-  import Footer from './components/Footer.vue'
-  import LateralBar from './components/LateralBar.vue'
-  import DisplayCurl from './components/DisplayCurl.vue'
-  import RequestForm from './components/request/RequestForm.vue'
-  import MainBtn from './components/MainBtn.vue'
-  //Validators, Core Functions and Repository
-  import { callFetch } from './core/fetchIt.ts'
-  import { generateCurl } from './core/generateCurl.ts'
-  import CallsRepository from './repository/CallsRepository.ts'
-  import CallMapper from './repository/CallMapper.ts'
-  //Types & Interfaces
+  import {DisplayResponse, Footer, LateralBar, DisplayCurl, RequestForm, OptionsMenu} from './components/index.ts'
+  import { callFetch, generateCurl } from './core/index.ts'
+  import { calls } from './repository/index.ts'
   import type { BodyInfo, fetchCall, HeaderRequest, Options, ResponseToDisplay } from './interfaces/interfaces.ts'
 
   const urlFormData = ref<Record<string, any>>({method: 'GET'})
@@ -26,7 +16,7 @@
 
   const lastRequestSnapshot = ref<string>('')
 
-  const callRepo = new CallsRepository()
+  const callRepo = new calls.repository()
 
   const canSave = computed(() => {
     const hasUrl = !!urlFormData.value.url
@@ -35,10 +25,6 @@
     const hasResponse = !!responseToDisplay
 
     return hasUrl && (hasHeaders || hasBody || hasResponse)
-  })
-
-  watch(canSave, (newVal) => {
-    console.log('canSave changed:', newVal)
   })
 
   watch(
@@ -81,7 +67,6 @@
   }
 
   const submitCurl = () => {
-    console.log(`click`)
     displayCurl.value = true
     try {
       const options = getFormData()
@@ -95,7 +80,7 @@
   const loadCallById = (id: string) => {
     const call = callRepo.loadCallById(id)
     if (call) {
-      const [options, response] = CallMapper.toDomain(call)
+      const [options, response] = calls.mapper.toDomain(call)
       urlFormData.value = { method: options.method, url: options.url }
       headersFormData.value = options.headers || []
       bodyFormData.value = options.body || undefined
@@ -121,7 +106,7 @@
   const saveCall = () => {
     const options: Options = getFormData()
     const res: ResponseToDisplay | undefined = responseToDisplay.value ?  toRaw(responseToDisplay.value) : undefined
-    const call: fetchCall = CallMapper.toPersistence(options, res)
+    const call: fetchCall = calls.mapper.toPersistence(options, res)
     callRepo.saveCall(call)
   }
 
@@ -131,21 +116,9 @@
     <LateralBar v-on:load-call="loadCallById"/>
     <div class="flex flex-col gap-5 pt-5 overflow-y-hidden items-center w-full overflow-hidden h-full">
       <h1>Fetch It</h1>
-      <div class="flex flex-row min-h-8 h-fit justify-center gap-2 flex-wrap">
-        <MainBtn :disabled="!canSave" :onClick="submitFetch" text="Send" sr-only="Send API" icon-class="pi-send" />
-        <MainBtn :disabled="!canSave" :onClick="submitCurl" text="cUrl" sr-only="Generate a cURL" icon-class="pi-code" />
-        <MainBtn :disabled="!canSave" :onClick="saveCall" text="Save" sr-only="Save call data" icon-class="pi-save" />
-        <MainBtn :disabled="!canSave" :onClick="resetCall" text="Reset Form" sr-only="Reset all inputs" icon-class="pi-refresh"/>
-      </div>
-      <RequestForm
-        v-model:urlFormData="urlFormData"
-        v-model:headersFormData="headersFormData"
-        v-model:bodyFormData="bodyFormData"
-        v-model:isFormDisplayed="isFormDisplayed"
-      />
+      <OptionsMenu :canSave="canSave" :submitFetch="submitFetch" :saveCall="saveCall" :resetCall="resetCall" :submitCurl="submitCurl" />
+      <RequestForm v-model:urlFormData="urlFormData" v-model:headersFormData="headersFormData" v-model:bodyFormData="bodyFormData" v-model:isFormDisplayed="isFormDisplayed" />
       <span class="w-4/5 h-0.5 bg-stone-900"></span>
-      <div>
-      </div>
       <button v-if="responseToDisplay" class="response-btn" @click="() => {displayResponse = !displayResponse}">
         <i :class="['pi', displayResponse ? 'pi-eye-slash': 'pi-eye']"></i>
         {{ displayResponse ? 'Hide response' : 'Show Response' }}

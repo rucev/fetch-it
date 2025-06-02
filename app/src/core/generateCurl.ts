@@ -1,54 +1,54 @@
 import type { Options } from '../interfaces/interfaces'
 import { isValidOptions } from '../validators/options'
 
-export const generateCurl = (options: Options, isVerbose: boolean): string[] => {
-    if (!isValidOptions(options)) throw new Error('Invalid options')
+export default (options: Options, isVerbose: boolean): string[] => {
+  if (!isValidOptions(options)) throw new Error('Invalid options')
 
-    const cUrlLines: string[] = []
+  const cUrlLines: string[] = []
 
-    cUrlLines.push(`curl -X ${options.method} "${options.url}" \\`)
+  cUrlLines.push(`curl -X ${options.method} "${options.url}" \\`)
 
-    if (options.headers) {
-        options.headers.forEach(header => {
-            cUrlLines.push(`-H "${header.name.content}: ${header.value.content}" \\`)
-        })
-    }
+  if (options.headers) {
+    options.headers.forEach(header => {
+      cUrlLines.push(`-H "${header.name.content}: ${header.value.content}" \\`)
+    })
+  }
 
-    if (options.body && typeof options.body === 'object' && 'type' in options.body && 'content' in options.body) {
-        const { type, content } = options.body
+  if (options.body && typeof options.body === 'object' && 'type' in options.body && 'content' in options.body) {
+    const { type, content } = options.body
 
-        let formattedBody: string | undefined
+    let formattedBody: string | undefined
 
-        switch (type) {
-            case 'json':
-                try {
-                    const json = typeof content === 'string' ? JSON.parse(content) : content
-                    formattedBody = JSON.stringify(json)
-                } catch {
-                    formattedBody = typeof content === 'string' ? content : JSON.stringify(content)
-                }
-                break
-
-            case 'text':
-            case 'xml':
-                formattedBody = typeof content === 'string' ? content : String(content)
-                break
-
-            default:
-                formattedBody = undefined
+    switch (type) {
+      case 'json':
+        try {
+          const json = typeof content === 'string' ? JSON.parse(content) : content
+          formattedBody = JSON.stringify(json)
+        } catch {
+          formattedBody = typeof content === 'string' ? content : JSON.stringify(content)
         }
+        break
 
-        if (formattedBody) {
-            cUrlLines.push(`-d '${formattedBody}' \\`)
-        }
+      case 'text':
+      case 'xml':
+        formattedBody = typeof content === 'string' ? content : String(content)
+        break
+
+      default:
+        formattedBody = undefined
     }
 
-    const lastIndex = cUrlLines.length - 1
-    cUrlLines[lastIndex] = cUrlLines[lastIndex].replace(/\\$/, '').trim()
-
-    if (isVerbose) {
-        cUrlLines[lastIndex] += ' -v'
+    if (formattedBody) {
+      cUrlLines.push(`-d '${formattedBody}' \\`)
     }
+  }
 
-    return cUrlLines
+  const lastIndex = cUrlLines.length - 1
+  cUrlLines[lastIndex] = cUrlLines[lastIndex].replace(/\\$/, '').trim()
+
+  if (isVerbose) {
+    cUrlLines[lastIndex] += ' -v'
+  }
+
+  return cUrlLines
 }
