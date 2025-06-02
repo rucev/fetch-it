@@ -143,7 +143,7 @@ const saveCall = () => {
     <div class="flex flex-col gap-5 pt-5 overflow-y-hidden items-center w-full overflow-hidden h-full">
       <h1>Fetch It</h1>
       <div class="flex flex-row min-h-8 h-fit justify-center gap-2 flex-wrap">
-        <MainBtn :disabled="!canSave" :onClick="submitFetch" text="Send" sr-only="Send API call" icon-class="pi-send" />
+        <MainBtn :disabled="!canSave" :onClick="submitFetch" text="Send" sr-only="Send API" icon-class="pi-send" />
         <MainBtn :disabled="!canSave" :onClick="submitCurl" text="cUrl" sr-only="Generate a cURL" icon-class="pi-code" />
         <MainBtn :disabled="!canSave" :onClick="saveCall" text="Save" sr-only="Save call data" icon-class="pi-save" />
         <MainBtn :disabled="!canSave" :onClick="resetCall" text="Reset Form" sr-only="Reset all inputs" icon-class="pi-refresh"/>
@@ -185,11 +185,15 @@ const saveCall = () => {
   h1 {
     @apply text-7xl font-extrabold
   }
+
+  button, input {
+    @apply cursor-pointer
+  }
 }
 
 @layer components {
   .config-btn {
-    @apply cursor-pointer border-stone-600 border-1 hover:text-gray-200 hover:border-gray-200 text-stone-400 font-bold py-2 px-4 rounded inline-flex items-center
+    @apply cursor-pointer border-stone-600 border-1 hover:text-gray-200 hover:border-gray-200 text-stone-400 font-bold py-2 px-4 rounded inline-flex items-center max-h-8.5
   }
   .response-btn {
     @apply cursor-pointer border-stone-600 border-1 hover:text-gray-200 hover:border-gray-200 text-stone-400 font-bold py-2 px-4 rounded inline-flex flex-row items-center self-start gap-2
