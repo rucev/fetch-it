@@ -1,9 +1,9 @@
 <script setup lang="ts">
   import { computed, ref, watch, onMounted } from 'vue'
   import BodyTypeSelector from './dropdownInputs/BodyTypeSelector.vue'
-  import type { BodyTypeOptions } from '../interfaces/types'
-  import { isValidBody } from '../validators/options'
-  import type { BodyInfo } from '../interfaces/interfaces'
+  import type { BodyTypeOptions } from '../../interfaces/types'
+  import { isValidBody } from '../../validators/options'
+  import type { BodyInfo } from '../../interfaces/interfaces'
 
   const props = defineProps<{
     body: BodyInfo | undefined

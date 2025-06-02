@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { computed, ref, watch } from 'vue'
   import MethodSelector from './dropdownInputs/MethodSelector.vue'
-import { isValidHttpUrl } from '../validators/options';
+  import { isValidHttpUrl } from '../../validators/options';
 
   const props = defineProps({
     modelValue: Object

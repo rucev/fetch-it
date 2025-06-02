@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { computed } from 'vue'
-  import type { HeaderRequest } from '../interfaces/interfaces'
+  import type { HeaderRequest } from '../../interfaces/interfaces'
   import HeadersNameSelector from './dropdownInputs/HeadersNameSelector.vue'
   import HeadersValueSelector from './dropdownInputs/HeadersValueSelector.vue'
 
