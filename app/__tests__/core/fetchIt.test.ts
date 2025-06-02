@@ -22,7 +22,7 @@ describe('formatResponse', () => {
     const result = await formatResponse(mockResponse)
 
     expect(result).toEqual({
-      headers: [{ name: 'content-type', value: 'application/json' }, { name: 'x-test', value: '123' }],
+      headers: [{ name: 'content-typeAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', value: 'application/json' }, { name: 'x-test', value: '123' }],
       body: { message: 'ok' },
       statusCode: 200,
       statusMsg: 'OK'
