@@ -72,7 +72,7 @@
   @import "tailwindcss";
 
   .curl-container {
-    @apply bg-stone-800 w-full gap-5 overflow-auto px-4 py-2 mb-4 rounded flex flex-row justify-between
+    @apply bg-stone-800 w-full gap-5 overflow-auto pl-4 pr-18 py-2 mb-4 rounded flex flex-row justify-between
   }
 
   .copy-btn{
