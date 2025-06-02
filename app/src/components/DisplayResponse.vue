@@ -70,6 +70,10 @@ const toggleLabel = computed(() => displayResponse.value ? 'Hide response detail
 <style scoped>
   @import "tailwindcss";
   
+  .response-btn {
+    @apply cursor-pointer border-stone-600 border-1 hover:text-gray-200 hover:border-gray-200 text-stone-400 font-bold py-2 px-4 rounded inline-flex flex-row items-center self-start gap-2
+  }
+  
   .response-container {
     @apply flex flex-col w-4/5
   }

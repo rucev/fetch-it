@@ -116,13 +116,13 @@
   <main :class="[displayCurl ? 'h-screen overflow-hidden blur-[0.1rem]' : 'h-fit']">
     <LateralBar v-on:load-call="loadCallById"/>
     <div class="flex flex-col gap-5 pt-5 overflow-y-hidden items-center w-full overflow-hidden h-full">
-      <h1>Fetch It</h1>
+      <h1 class="text-7xl font-extrabold">Fetch It</h1>
       <OptionsMenu :canSave="canSave" :submitFetch="submitFetch" :saveCall="saveCall" :resetCall="resetCall" :submitCurl="submitCurl" />
       <RequestForm v-model:urlFormData="urlFormData" v-model:headersFormData="headersFormData" v-model:bodyFormData="bodyFormData" v-model:isFormDisplayed="isFormDisplayed" />
-      <span class="w-4/5 h-0.5 bg-stone-900"></span>
+      <hr class="w-4/5 border-0 h-0.5 bg-stone-900" />
       <DisplayResponse v-if="responseToDisplay" :response="responseToDisplay" />      
     </div>
-    <Footer />
+    <Footer></Footer>
   </main>
 </template>
 <style>
@@ -137,19 +137,8 @@
       @apply flex flex-col gap-5 overflow-y-hidden justify-between items-center max-w-screen overflow-hidden min-h-screen pt-7 px-7
     }
 
-    h1 {
-      @apply text-7xl font-extrabold
-    }
-
     button, input {
       @apply cursor-pointer
-    }
-  }
-
-  @layer components {
-
-    .response-btn {
-      @apply cursor-pointer border-stone-600 border-1 hover:text-gray-200 hover:border-gray-200 text-stone-400 font-bold py-2 px-4 rounded inline-flex flex-row items-center self-start gap-2
     }
   }
 </style>
