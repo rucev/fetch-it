@@ -120,11 +120,7 @@
       <OptionsMenu :canSave="canSave" :submitFetch="submitFetch" :saveCall="saveCall" :resetCall="resetCall" :submitCurl="submitCurl" />
       <RequestForm v-model:urlFormData="urlFormData" v-model:headersFormData="headersFormData" v-model:bodyFormData="bodyFormData" v-model:isFormDisplayed="isFormDisplayed" />
       <span class="w-4/5 h-0.5 bg-stone-900"></span>
-      <button v-if="responseToDisplay" class="response-btn" @click="() => {displayResponse = !displayResponse}">
-        <i :class="['pi', displayResponse ? 'pi-eye-slash': 'pi-eye']"></i>
-        {{ displayResponse ? 'Hide response' : 'Show Response' }}
-      </button>
-      <DisplayResponse v-if="displayResponse" :response="responseToDisplay" />      
+      <DisplayResponse v-if="responseToDisplay" :response="responseToDisplay" />      
     </div>
     <Footer />
   </main>
