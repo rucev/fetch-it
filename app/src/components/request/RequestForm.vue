@@ -49,3 +49,18 @@
     </div>
   </div>
 </template>
+<style>
+    @import "tailwindcss";
+
+    .config-btn {
+      @apply cursor-pointer border-stone-600 border-1 hover:text-gray-200 hover:border-gray-200 text-stone-400 font-bold py-2 px-4 rounded inline-flex items-center max-h-8.5
+    }
+
+    .dropdown {
+      @apply border-stone-600 border-1 w-42 cursor-pointer flex flex-row justify-center items-center rounded-md py-1.5 pr-7 pl-3 text-base text-stone-200 placeholder:text-stone-400 placeholder:bg-stone-900 focus:outline-2 focus:-outline-offset-2 focus:outline-stone-950 sm:text-sm/6
+    }
+
+    select option {
+      @apply cursor-pointer bg-stone-900
+    }
+</style>

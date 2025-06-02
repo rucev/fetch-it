@@ -112,7 +112,8 @@
 
 </script>
 <template>
-  <main>
+  <DisplayCurl v-if="displayCurl" :curl="generatedCurl" :onCloseCurl="() => {displayCurl = false}" />
+  <main :class="[displayCurl ? 'h-screen overflow-hidden blur-[0.1rem]' : 'h-fit']">
     <LateralBar v-on:load-call="loadCallById"/>
     <div class="flex flex-col gap-5 pt-5 overflow-y-hidden items-center w-full overflow-hidden h-full">
       <h1>Fetch It</h1>
@@ -123,36 +124,36 @@
         <i :class="['pi', displayResponse ? 'pi-eye-slash': 'pi-eye']"></i>
         {{ displayResponse ? 'Hide response' : 'Show Response' }}
       </button>
-      <DisplayResponse v-if="displayResponse" :response="responseToDisplay" />
-      <DisplayCurl v-if="displayCurl" :curl="generatedCurl" :onCloseCurl="() => {displayCurl = false}" />
+      <DisplayResponse v-if="displayResponse" :response="responseToDisplay" />      
     </div>
-    <Footer></Footer>
+    <Footer />
   </main>
 </template>
-
 <style>
-@import "tailwindcss";
+  @import "tailwindcss";
 
-@layer base {
-  main {
-    @apply bg-stone-800 text-gray-50 flex flex-col gap-5 overflow-y-hidden justify-between items-center max-w-screen overflow-hidden min-h-screen pt-7 px-7
+  @layer base {
+    body {
+      @apply bg-stone-800 text-gray-50
+    }
+
+    main {
+      @apply flex flex-col gap-5 overflow-y-hidden justify-between items-center max-w-screen overflow-hidden min-h-screen pt-7 px-7
+    }
+
+    h1 {
+      @apply text-7xl font-extrabold
+    }
+
+    button, input {
+      @apply cursor-pointer
+    }
   }
 
-  h1 {
-    @apply text-7xl font-extrabold
-  }
+  @layer components {
 
-  button, input {
-    @apply cursor-pointer
+    .response-btn {
+      @apply cursor-pointer border-stone-600 border-1 hover:text-gray-200 hover:border-gray-200 text-stone-400 font-bold py-2 px-4 rounded inline-flex flex-row items-center self-start gap-2
+    }
   }
-}
-
-@layer components {
-  .config-btn {
-    @apply cursor-pointer border-stone-600 border-1 hover:text-gray-200 hover:border-gray-200 text-stone-400 font-bold py-2 px-4 rounded inline-flex items-center max-h-8.5
-  }
-  .response-btn {
-    @apply cursor-pointer border-stone-600 border-1 hover:text-gray-200 hover:border-gray-200 text-stone-400 font-bold py-2 px-4 rounded inline-flex flex-row items-center self-start gap-2
-  }
-}
 </style>
