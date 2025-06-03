@@ -1,27 +1,25 @@
 import CallMapper from '../../src/repository/CallMapper'
 import type { Options, ResponseToDisplay, fetchCall } from '../../src/interfaces/interfaces'
-import { describe, expect, it, beforeEach, jest, afterEach } from '@jest/globals'
+import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest'
 
-jest.mock('../../src/validators/options', () => ({
-  isValidOptions: jest.fn()
+vi.mock('../../src/validators/options', () => ({
+  isValidOptions: vi.fn()
 }))
-
-global.crypto = {
-  randomUUID: jest.fn()
-} as unknown as Crypto
 
 import { isValidOptions } from '../../src/validators/options'
 
-describe('CallMapper', () => {
-  const mockUUID = '1234-5678'
+const mockUUID = `1234-ABCDE-56789-FGHIJKLMN-10111213`
 
+describe('CallMapper', () => {
   beforeEach(() => {
-    (isValidOptions as jest.Mock).mockReset()
-      ; (crypto.randomUUID as jest.Mock).mockReturnValue(mockUUID)
+    vi.clearAllMocks()
+      ; (isValidOptions as ReturnType<typeof vi.fn>).mockReset()
+
+    vi.spyOn(globalThis.crypto, 'randomUUID').mockReturnValue(mockUUID)
   })
 
   afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   describe('toPersistence', () => {
@@ -29,7 +27,12 @@ describe('CallMapper', () => {
       const options: Options = {
         url: 'https://api.example.com',
         method: 'GET',
-        headers: [{ name: { content: 'Content-Type', isCustom: false }, value: { content: 'application/json', isCustom: false } }],
+        headers: [
+          {
+            name: { content: 'Content-Type', isCustom: false },
+            value: { content: 'application/json', isCustom: false }
+          }
+        ],
         body: { content: 'test', type: 'text' }
       }
 
@@ -40,7 +43,7 @@ describe('CallMapper', () => {
         body: { message: 'Success' }
       }
 
-        ; (isValidOptions as jest.Mock).mockReturnValue(true)
+        ; (isValidOptions as ReturnType<typeof vi.fn>).mockReturnValue(true)
 
       const result = CallMapper.toPersistence(options, response)
 
@@ -50,7 +53,7 @@ describe('CallMapper', () => {
         request: {
           method: 'GET',
           url: 'https://api.example.com',
-          header: [{ name: { content: 'Content-Type', isCustom: false }, value: { content: 'application/json', isCustom: false } }],
+          header: options.headers,
           body: { content: 'test', type: 'text' }
         },
         response: {
@@ -64,7 +67,7 @@ describe('CallMapper', () => {
 
     it('should throw an error if options are invalid', () => {
       const options = {} as Options
-        ; (isValidOptions as jest.Mock).mockReturnValue(false)
+        ; (isValidOptions as ReturnType<typeof vi.fn>).mockReturnValue(false)
 
       expect(() => CallMapper.toPersistence(options, undefined)).toThrow('Error mapping call')
     })
@@ -78,7 +81,12 @@ describe('CallMapper', () => {
         request: {
           method: 'GET',
           url: 'https://api.example.com',
-          header: [{ name: { content: 'Content-Type', isCustom: false }, value: { content: 'application/json', isCustom: false } }],
+          header: [
+            {
+              name: { content: 'Content-Type', isCustom: false },
+              value: { content: 'application/json', isCustom: false }
+            }
+          ],
           body: { content: 'test', type: 'text' }
         },
         response: {
@@ -94,9 +102,10 @@ describe('CallMapper', () => {
       expect(options).toEqual({
         method: 'GET',
         url: 'https://api.example.com',
-        headers: [{ name: { content: 'Content-Type', isCustom: false }, value: { content: 'application/json', isCustom: false } }],
+        headers: savedCall.request.header,
         body: { content: 'test', type: 'text' }
       })
+
       expect(response).toEqual({
         statusMsg: 'OK',
         statusCode: 200,
@@ -114,7 +123,12 @@ describe('CallMapper', () => {
         request: {
           method: 'GET',
           url: 'https://api.example.com',
-          header: [{ name: { content: 'Content-Type', isCustom: false }, value: { content: 'application/json', isCustom: false } }],
+          header: [
+            {
+              name: { content: 'Content-Type', isCustom: false },
+              value: { content: 'application/json', isCustom: false }
+            }
+          ],
           body: { content: 'test', type: 'text' }
         },
         response: undefined

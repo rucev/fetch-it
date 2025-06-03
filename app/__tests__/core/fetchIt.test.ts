@@ -1,14 +1,14 @@
 import callFetch, { formatResponse } from '../../src/core/fetchIt'
-import { describe, expect, it, beforeEach, jest, afterEach } from '@jest/globals'
+import { describe, expect, it, beforeEach, afterEach, vi, MockedFunction } from 'vitest'
 
-jest.mock('../../src/validators/options', () => ({
-  isValidOptions: jest.fn()
+vi.mock('../../src/validators/options', () => ({
+  isValidOptions: vi.fn()
 }))
 
 import { isValidOptions } from '../../src/validators/options'
 
-const mockFetch = jest.fn() as jest.MockedFunction<typeof fetch>
-global.fetch = mockFetch
+const mockFetch = vi.fn() as unknown as MockedFunction<typeof fetch>
+globalThis.fetch = mockFetch
 
 describe('formatResponse', () => {
   it('should parse JSON body and headers correctly', async () => {
@@ -22,7 +22,10 @@ describe('formatResponse', () => {
     const result = await formatResponse(mockResponse)
 
     expect(result).toEqual({
-      headers: [{ name: 'content-type', value: 'application/json' }, { name: 'x-test', value: '123' }],
+      headers: [
+        { name: 'content-type', value: 'application/json' },
+        { name: 'x-test', value: '123' }
+      ],
       body: { message: 'ok' },
       statusCode: 200,
       statusMsg: 'OK'
@@ -32,15 +35,15 @@ describe('formatResponse', () => {
 
 describe('callFetch', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('should throw if options are invalid', async () => {
-    (isValidOptions as jest.Mock).mockReturnValue(false)
+    ; (isValidOptions as ReturnType<typeof vi.fn>).mockReturnValue(false)
 
     await expect(
       callFetch({
@@ -51,7 +54,7 @@ describe('callFetch', () => {
   })
 
   it('should call fetch with correct params and format the response', async () => {
-    (isValidOptions as jest.Mock).mockReturnValue(true)
+    ; (isValidOptions as ReturnType<typeof vi.fn>).mockReturnValue(true)
 
     const mockJson = { data: 'value' }
 
@@ -75,7 +78,7 @@ describe('callFetch', () => {
       }
     })
 
-    expect(global.fetch).toHaveBeenCalledWith('https://api.test.com', {
+    expect(globalThis.fetch).toHaveBeenCalledWith('https://api.test.com', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

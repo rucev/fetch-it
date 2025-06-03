@@ -1,9 +1,9 @@
 import generateCurl from '../../src/core/generateCurl'
 import type { Options } from '../../src/interfaces/interfaces'
-import { describe, expect, it, beforeEach, jest, afterEach } from '@jest/globals'
+import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest'
 
-jest.mock('../../src/validators/options', () => ({
-  isValidOptions: jest.fn()
+vi.mock('../../src/validators/options', () => ({
+  isValidOptions: vi.fn()
 }))
 
 import { isValidOptions } from '../../src/validators/options'
@@ -17,15 +17,15 @@ describe('generateCurl', () => {
   }
 
   beforeEach(() => {
-    (isValidOptions as jest.Mock).mockReturnValue(true)
+    ; (isValidOptions as ReturnType<typeof vi.fn>).mockReturnValue(true)
   })
 
   afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('should throw an error if options are invalid', () => {
-    (isValidOptions as jest.Mock).mockReturnValue(false)
+    ; (isValidOptions as ReturnType<typeof vi.fn>).mockReturnValue(false)
     expect(() => generateCurl(baseOptions, false)).toThrow('Invalid options')
   })
 

@@ -1,6 +1,6 @@
+import { describe, it, expect } from 'vitest'
 import { isValidHeader, areValidHeaders, isValidHttpUrl, doesMethodAcceptBody, isValidBody, isValidOptions } from '../../src/validators/options'
 import type { HeaderRequest, Options } from '../../src/interfaces/interfaces'
-import { describe, expect, it } from '@jest/globals'
 
 describe('isValidHeader', () => {
   it('returns true for valid header', () => {
@@ -123,12 +123,22 @@ describe('isValidOptions', () => {
   })
 
   it('returns false for invalid url', () => {
-    const options = { url: 'invalid-url', method: 'POST', headers: [], body: undefined } as Options
+    const options = {
+      url: 'invalid-url',
+      method: 'POST',
+      headers: [],
+      body: undefined
+    } as Options
     expect(isValidOptions(options)).toBe(false)
   })
 
   it('returns false for unsupported method', () => {
-    const options = { url: 'http://ok.com', method: 'INVALID' as any, headers: [], body: undefined }
+    const options = {
+      url: 'http://ok.com',
+      method: 'INVALID' as any,
+      headers: [],
+      body: undefined
+    } as Options
     expect(isValidOptions(options)).toBe(false)
   })
 })

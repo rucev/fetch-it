@@ -1,33 +1,38 @@
 import CallsRepository from '../../src/repository/CallsRepository'
 import type { fetchCall } from '../../src/interfaces/interfaces'
-import { describe, expect, it, beforeEach, jest, afterEach } from '@jest/globals'
+import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest'
 
 const store: Record<string, string> = {}
-const mockLocalStorage: jest.Mocked<Storage> = {
-  getItem: jest.fn((key: string) => store[key] || null),
-  setItem: jest.fn((key: string, value: string) => { store[key] = value }),
-  removeItem: jest.fn((key: string) => { delete store[key] }),
-  clear: jest.fn(() => {
+
+const mockLocalStorage: Storage = {
+  getItem: vi.fn((key: string) => store[key] || null),
+  setItem: vi.fn((key: string, value: string) => {
+    store[key] = value
+  }),
+  removeItem: vi.fn((key: string) => {
+    delete store[key]
+  }),
+  clear: vi.fn(() => {
     for (const key in store) delete store[key]
   }),
-  key: jest.fn((index: number) => Object.keys(store)[index] || null),
+  key: vi.fn((index: number) => Object.keys(store)[index] || null),
   get length() {
     return Object.keys(store).length
   },
 }
 
-global.localStorage = mockLocalStorage
+globalThis.localStorage = mockLocalStorage
 
 describe('CallsRepository', () => {
   let repo: CallsRepository
-
 
   beforeEach(() => {
     repo = new CallsRepository()
   })
 
   afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
+    mockLocalStorage.clear()
   })
 
   const sampleCall: fetchCall = {
@@ -37,9 +42,9 @@ describe('CallsRepository', () => {
       method: 'GET',
       url: 'https://api.test.com',
       header: [],
-      body: undefined
+      body: undefined,
     },
-    response: undefined
+    response: undefined,
   }
 
   describe('saveCall', () => {
@@ -54,11 +59,10 @@ describe('CallsRepository', () => {
     })
 
     it('should append call if calls already exist', () => {
-      (localStorage.getItem as jest.Mock).mockReturnValueOnce(JSON.stringify([sampleCall]))
+      vi.spyOn(localStorage, 'getItem').mockReturnValueOnce(JSON.stringify([sampleCall]))
 
       const newCall = { ...sampleCall, fetchId: 'xyz-789' }
       repo.saveCall(newCall)
-
 
       const raw = localStorage.getItem('fetch-calls')
       const savedData = raw !== null ? JSON.parse(raw) : null
@@ -71,31 +75,31 @@ describe('CallsRepository', () => {
 
   describe('getAllCalls', () => {
     it('should return empty array if no calls saved', () => {
-      (localStorage.getItem as jest.Mock).mockReturnValueOnce(null)
+      vi.spyOn(localStorage, 'getItem').mockReturnValueOnce(null)
       expect(repo.getAllCalls()).toEqual([])
     })
 
     it('should return array of {name, fetchId} objects', () => {
-      (localStorage.getItem as jest.Mock).mockReturnValueOnce(JSON.stringify([sampleCall]))
+      vi.spyOn(localStorage, 'getItem').mockReturnValueOnce(JSON.stringify([sampleCall]))
       expect(repo.getAllCalls()).toEqual([{ name: sampleCall.name, fetchId: sampleCall.fetchId }])
     })
   })
 
   describe('loadCallById', () => {
     it('should return the call by fetchId', () => {
-      (localStorage.getItem as jest.Mock).mockReturnValueOnce(JSON.stringify([sampleCall]))
+      vi.spyOn(localStorage, 'getItem').mockReturnValueOnce(JSON.stringify([sampleCall]))
       expect(repo.loadCallById(sampleCall.fetchId)).toEqual(sampleCall)
     })
 
     it('should return undefined if call not found', () => {
-      (localStorage.getItem as jest.Mock).mockReturnValueOnce(JSON.stringify([]))
+      vi.spyOn(localStorage, 'getItem').mockReturnValueOnce(JSON.stringify([]))
       expect(repo.loadCallById('nonexistent')).toBeUndefined()
     })
   })
 
   describe('deleteCallById', () => {
     it('should delete the call by fetchId', () => {
-      (localStorage.getItem as jest.Mock).mockReturnValueOnce(JSON.stringify([sampleCall]))
+      vi.spyOn(localStorage, 'getItem').mockReturnValueOnce(JSON.stringify([sampleCall]))
       repo.deleteCallById(sampleCall.fetchId)
 
       const raw = localStorage.getItem('fetch-calls')
@@ -104,7 +108,7 @@ describe('CallsRepository', () => {
     })
 
     it('should do nothing if call not found', () => {
-      (localStorage.getItem as jest.Mock).mockReturnValueOnce(JSON.stringify([sampleCall]))
+      vi.spyOn(localStorage, 'getItem').mockReturnValueOnce(JSON.stringify([sampleCall]))
       repo.deleteCallById('nonexistent')
       expect(localStorage.setItem).not.toHaveBeenCalled()
     })
