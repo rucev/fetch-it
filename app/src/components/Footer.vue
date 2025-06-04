@@ -1,12 +1,16 @@
 <template>
   <footer role="contentinfo" class="mt-5 pb-2 w-full px-4 flex flex-col items-center">
     <hr class="w-4/5 border-0 h-0.5 bg-stone-900 my-2" />
-    <div class="flex flex-row items-center justify-between w-full">
+    <div class="flex items-center justify-center md:justify-between w-full flex-col md:flex-row">
       <a class="text-stone-400" href="https://github.com/rucev/fetch-it" target="_blank" rel="noopener" aria-label="Open Fetch It GitHub repository in a new tab">
         <i aria-hidden="true" class="pi pi-github text-xl"></i>
         Fetch It Code
       </a>
-      <div class="flex flex-row items-center justify-end gap-0.5 w-full text-stone-500">
+      <div class="w-full justify-center items-center flex flex-col">
+        <p class="text-stone-200 text-xs md:text-sm font-bold">This tool is fully client-side. No data is sent or stored externally.</p>
+        <p class="text-stone-400 text-xs md:text-sm italic">unless that's exactly what your API call is trying to do</p>
+      </div>
+      <div class="flex flex-row items-center justify-end gap-0.5 w-fit text-stone-500">
         <a  href="https://github.com/rucev" target="_blank" rel="noopener" aria-label="Open Flors Rueda GitHub profile in a new tab">
           <i aria-hidden="true" class="pi pi-github text-xl"></i>
         </a>
