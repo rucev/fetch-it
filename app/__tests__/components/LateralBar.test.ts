@@ -14,7 +14,7 @@ vi.mock('../../src/repository/CallsRepository', () => ({
 
 import CallsRepository from '../../src/repository/CallsRepository'
 
-describe('LateralBar Sidebar Component', () => {
+describe('LateralBar', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
@@ -38,11 +38,14 @@ describe('LateralBar Sidebar Component', () => {
 
     await fireEvent.click(toggleBtn)
 
+    const deleteButtons = screen.getAllByRole('button', { name: /delete saved call/i })
+
     expect(screen.getByText('Mock Call')).toBeInTheDocument()
     expect(screen.getByText('Another Call')).toBeInTheDocument()
+    expect(deleteButtons.length).toBe(2)
   })
 
-  it('calls deleteCallById and updates list when delete button is clicked', async () => {
+  it('calls "deleteCallById" and updates list when delete button is clicked', async () => {
     render(LateralBar)
     const toggleBtn = screen.getByRole('button', { name: /toggle saved calls menu/i })
     await fireEvent.click(toggleBtn)
