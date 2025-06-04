@@ -15,7 +15,7 @@ const isCopied = ref(false)
 const copyToClipboard = async () => {
   if (!curlRef.value) return
   try {
-    await navigator.clipboard.writeText(curlRef.value.textContent)
+    await navigator.clipboard.writeText(curlRef.value.textContent !== null ? curlRef.value.textContent : '')
     isCopied.value = true
     setTimeout(() => isCopied.value = false, 1000)
   } catch (error) {
