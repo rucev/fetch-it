@@ -33,12 +33,12 @@
 <template>
   <div class="flex flex-col justify-center items-center gap-5 w-full">
     <div class="w-full max-w-[720px] flex gap-4 flex-row">
-      <button class="config-btn" @click="toggleDisplay">
+      <button aria-controls="options-dropdown-form" aria-label="Toggle options form" class="config-btn" @click="toggleDisplay">
         <i :class="['pi', isFormDisplayed ? 'pi-times': 'pi-cog']"></i>
       </button>
       <UrlForm :modelValue="urlFormData" @update:modelValue="val => emit('update:urlFormData', val)" />
     </div>
-    <div v-show="isFormDisplayed" class="flex flex-col gap-2 w-full">
+    <div v-show="isFormDisplayed" class="flex flex-col gap-2 w-full" id="options-dropdown-form">
       <HeadersForm :modelValue="headersFormData" @update:modelValue="val => emit('update:headersFormData', val)" />
       <BodyForm
         v-if="methodAcceptsBody"
