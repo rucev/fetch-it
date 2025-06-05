@@ -16,7 +16,6 @@ concurrency:
 
 jobs:
   deploy:
-    name: CI/CD
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
