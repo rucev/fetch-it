@@ -1,0 +1,12 @@
+# Get the commit message
+COMMIT_MSG=$(cat "$1")
+
+echo $COMMIT_MSG
+
+# Check if the commit message follows the defined structure
+if ! echo "$COMMIT_MSG" | grep -qE "^(add|fix|delete|style|refactor|update|test|build|change|improve|start|wip) .+"; then
+  echo "Commit Error: Invalid commit message format."
+  echo "Please use lowercase"
+  echo "Please use one of the following prefixes: add, fix, delete, style, refactor, update, test, build, change, improve, start or wip (work in progress)."
+  exit 1
+fi

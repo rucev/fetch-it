@@ -4,12 +4,9 @@ on:
   push:
     branches-ignore:
       - main
-  pull_request:
-    branches:
-      - main
 
 jobs:
-  deploy:
+  ci:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -26,6 +23,24 @@ jobs:
         working-directory: ./app 
         run: npm ci
       
+      - name: Audit Dependencies for Vulnerabilities
+        working-directory: ./app 
+        run: |
+          audit_output=$(npm audit --json)
+          low=$(echo "$audit_output" | jq '.metadata.vulnerabilities.low')
+          moderate=$(echo "$audit_output" | jq '.metadata.vulnerabilities.moderate')
+          high=$(echo "$audit_output" | jq '.metadata.vulnerabilities.high')
+          critical=$(echo "$audit_output" | jq '.metadata.vulnerabilities.critical')
+
+          echo "Vulnerabilities - Low: $low, Moderate: $moderate, High: $high, Critical: $critical"
+
+          if [ "$low" -gt 0 ] || [ "$moderate" -gt 0 ] || [ "$high" -gt 0 ] || [ "$critical" -gt 0 ]; then
+            echo -e "\e[0;31mVulnerabilities found."
+            exit 1
+          else
+            echo -e "\e[0;32mNo vulnerabilities found."
+          fi
+            
       - name: Run tests
         working-directory: ./app 
         run: npm run test

@@ -120,10 +120,6 @@ npm run test
 The app is deployed using GitHub Pages via a CI/CD workflow on the main branch: [check it out!](https://github.com/rucev/fetch-it/actions)
 
 ## Roadmap
-### DevOps / CI Improvements
-- [ ] Add Husky for pre-commit checks [#2](https://github.com/rucev/fetch-it/issues/2)
-- [ ] Run automated tests on all branches via GitHub Actions [#2](https://github.com/rucev/fetch-it/issues/2)
-
 ### Features
 
 - [ ] Import/export saved requests [#3](https://github.com/rucev/fetch-it/issues/3)
