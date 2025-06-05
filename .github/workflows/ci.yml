@@ -10,6 +10,7 @@ on:
 
 jobs:
   deploy:
+    name: CI (tests, audit and build)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
