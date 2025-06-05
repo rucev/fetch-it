@@ -27,6 +27,7 @@ jobs:
         run: npm ci
       
       - name: Audit Dependencies for Vulnerabilities
+        working-directory: ./app 
         run: |
           audit_output=$(npm audit --json)
           low=$(echo "$audit_output" | jq '.metadata.vulnerabilities.low')
@@ -36,13 +37,12 @@ jobs:
 
           echo "Vulnerabilities - Low: $low, Moderate: $moderate, High: $high, Critical: $critical"
 
-          if [ "$moderate" -gt 0 ] || [ "$high" -gt 0 ] || [ "$critical" -gt 0 ]; then
-            echo -e "${RED} High level vulnerabilities found. Failing the job."
+          if [ "$low" -gt 0 ] || [ "$moderate" -gt 0 ] || [ "$high" -gt 0 ] || [ "$critical" -gt 0 ]; then
+            echo -e "\e[0;31mVulnerabilities found."
             exit 1
           else
-            echo -e "${GREEN} No vulnerabilities found."
+            echo -e "\e[0;32mNo vulnerabilities found."
           fi
-        working-directory: app
             
       - name: Run tests
         working-directory: ./app 
