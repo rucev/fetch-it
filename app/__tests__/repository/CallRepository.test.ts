@@ -85,6 +85,16 @@ describe('CallsRepository', () => {
     })
   })
 
+  describe('getAllCallsToDownload', () => {
+    const json = JSON.stringify([sampleCall])
+    const blobMock = new Blob([json], { type: "application/json" });
+
+    it('should return array of {name, fetchId} objects', () => {
+      vi.spyOn(localStorage, 'getItem').mockReturnValueOnce(JSON.stringify([sampleCall]))
+      expect(repo.getAllCallsToDownload()).toEqual(blobMock)
+    })
+  })
+
   describe('loadCallById', () => {
     it('should return the call by fetchId', () => {
       vi.spyOn(localStorage, 'getItem').mockReturnValueOnce(JSON.stringify([sampleCall]))

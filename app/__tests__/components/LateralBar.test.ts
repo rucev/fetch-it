@@ -8,9 +8,13 @@ vi.mock('../../src/repository/CallsRepository', () => ({
     getAllCalls: vi.fn(() => [
       { name: 'Mock Call', fetchId: 'abc123' }, { name: 'Another Call', fetchId: '123abc' }
     ]),
-    deleteCallById: vi.fn()
+    deleteCallById: vi.fn(),
+    getAllCallsToDownload: vi.fn()
   }))
 }))
+
+globalThis.URL.createObjectURL = vi.fn(() => 'blob:http://localhost/fake-url')
+globalThis.URL.revokeObjectURL = vi.fn()
 
 import CallsRepository from '../../src/repository/CallsRepository'
 
@@ -69,6 +73,21 @@ describe('LateralBar', () => {
     expect(emitted()).toHaveProperty('loadCall')
     expect(emitted().loadCall[0]).toEqual(['abc123'])
     expect(screen.queryByRole('region')).not.toBeInTheDocument()
+  })
+
+  it('calls "onExportClick" and updates list when delete button is clicked', async () => {
+    render(LateralBar)
+    const toggleBtn = screen.getByRole('button', { name: /toggle saved calls menu/i })
+    await fireEvent.click(toggleBtn)
+
+    const exportBtn = screen.getAllByRole('button', { name: /Export saved calls to a json file/i })
+    expect(exportBtn.length).toBe(1)
+
+    await fireEvent.click(exportBtn[0])
+    const mockInstance = (CallsRepository as Mock).mock.results[0].value
+    expect(mockInstance.getAllCallsToDownload).toHaveBeenCalled()
+    expect(globalThis.URL.createObjectURL).toHaveBeenCalled()
+    expect(globalThis.URL.revokeObjectURL).toHaveBeenCalled()
   })
 
   it('closes sidebar on Escape key press', async () => {
