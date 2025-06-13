@@ -61,8 +61,6 @@
 
       const reader = new FileReader()
 
-      console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
-
       reader.onload = (_event) => {
         try {
           const result = _event.target?.result;
