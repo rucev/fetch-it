@@ -53,6 +53,33 @@
     URL.revokeObjectURL(url)
   }
 
+  const handleFileUpload = (event: any) => { //TODO look out what kind of event it is
+      const input = event.target as HTMLInputElement
+      const file = input.files?.[0]
+
+      if (!file) return
+
+      const reader = new FileReader()
+
+      console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
+
+      reader.onload = (_event) => {
+        try {
+          const result = _event.target?.result;
+          if (typeof result === 'string') {
+            const parsedData = JSON.parse(result)
+            callRepo.saveMultipleCalls(parsedData)
+            loadSavedCalls()
+          }
+        } catch (error) {
+          console.error('Failed to parse JSON: ' + error)
+        }
+      }
+
+    reader.readAsText(file)
+
+  }
+
   onMounted(() => {
     loadSavedCalls()
     window.addEventListener('keydown', handleKeydown)
@@ -109,13 +136,27 @@
         </li>
         </ul>
       </div>
-        <button aria-label="Export saved calls to a json file" class="download-btn" @click="onExportClick">Export Calls <i class="pi pi-download"></i></button>
-      
+        <div class="w-full flex flex-row gap-6 justify-start">
+          <button aria-label="Export saved calls to a json file" class="download-btn" @click="onExportClick">Export Calls <i class="pi pi-download"></i></button>
+          <label for="fileUpload" class="download-btn">
+            Import Calls <i class="pi pi-file-import"></i>
+            <input
+              id="fileUpload"
+              @change="handleFileUpload"
+              type="file"
+              accept="application/json"
+              aria-label="Import saved calls from a valid JSON file"
+              class="hidden"
+              placeholder="Your JSON file"
+            />
+          </label>    
+        </div>
     </aside>
   </div>
 </template>
 <style scoped>
   @import "tailwindcss";
+  
 
   .saved-calls-container {
     @apply w-screen max-w-screen h-screen top-0 flex flex-col justify-between md:w-[720px] bg-stone-900 shadow pt-14 px-5 pb-10;

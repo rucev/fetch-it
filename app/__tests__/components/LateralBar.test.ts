@@ -1,7 +1,42 @@
 declare let expect: any
-import { render, fireEvent, screen } from '@testing-library/vue'
+import { render, fireEvent, screen, waitFor } from '@testing-library/vue'
 import LateralBar from '../../src/components/LateralBar.vue'
 import { vi, describe, it, beforeEach, Mock } from 'vitest'
+
+class MockFileReader {
+  static EMPTY = 0
+  static LOADING = 1
+  static DONE = 2
+
+  result: string | ArrayBuffer | null = null
+  onload: ((this: FileReader, ev: ProgressEvent<FileReader>) => any) | null = null
+  onerror: ((this: FileReader, ev: ProgressEvent<FileReader>) => any) | null = null
+
+  readAsText(_blob: Blob) {
+    this.result = 'mocked file content';
+    if (this.onload) {
+      this.onload.call(this as unknown as FileReader, new ProgressEvent('load'))
+    }
+  }
+
+  readAsDataURL(_blob: Blob) {
+    this.result = 'data:mock/base64==';
+    if (this.onload) {
+      this.onload.call(this as unknown as FileReader, new ProgressEvent('load'))
+    }
+  }
+
+  readAsArrayBuffer(_blob: Blob) {
+    this.result = new ArrayBuffer(8);
+    if (this.onload) {
+      this.onload.call(this as unknown as FileReader, new ProgressEvent('load'))
+    }
+  }
+
+  abort() { }
+}
+
+vi.stubGlobal('FileReader', MockFileReader)
 
 vi.mock('../../src/repository/CallsRepository', () => ({
   default: vi.fn().mockImplementation(() => ({
@@ -9,12 +44,14 @@ vi.mock('../../src/repository/CallsRepository', () => ({
       { name: 'Mock Call', fetchId: 'abc123' }, { name: 'Another Call', fetchId: '123abc' }
     ]),
     deleteCallById: vi.fn(),
-    getAllCallsToDownload: vi.fn()
+    getAllCallsToDownload: vi.fn(),
+    saveMultipleCalls: vi.fn()
   }))
 }))
 
 globalThis.URL.createObjectURL = vi.fn(() => 'blob:http://localhost/fake-url')
 globalThis.URL.revokeObjectURL = vi.fn()
+
 
 import CallsRepository from '../../src/repository/CallsRepository'
 
@@ -75,7 +112,7 @@ describe('LateralBar', () => {
     expect(screen.queryByRole('region')).not.toBeInTheDocument()
   })
 
-  it('calls "onExportClick" and updates list when delete button is clicked', async () => {
+  it('calls "onExportClick" and updates list when export button is clicked', async () => {
     render(LateralBar)
     const toggleBtn = screen.getByRole('button', { name: /toggle saved calls menu/i })
     await fireEvent.click(toggleBtn)
@@ -88,6 +125,16 @@ describe('LateralBar', () => {
     expect(mockInstance.getAllCallsToDownload).toHaveBeenCalled()
     expect(globalThis.URL.createObjectURL).toHaveBeenCalled()
     expect(globalThis.URL.revokeObjectURL).toHaveBeenCalled()
+  })
+
+  it('it renders the correct type of input for "json imports"', async () => {
+    render(LateralBar)
+    const toggleBtn = screen.getByRole('button', { name: /toggle saved calls menu/i })
+    await fireEvent.click(toggleBtn)
+
+
+    const input = screen.getByPlaceholderText(/Your JSON file/i)
+    expect(input).toBeInTheDocument()
   })
 
   it('closes sidebar on Escape key press', async () => {

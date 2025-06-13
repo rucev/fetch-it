@@ -12,6 +12,16 @@ export default class CallsRepository {
     }
   }
 
+  saveMultipleCalls(calls: fetchCall[]): void {
+    try {
+      const _previousCalls: string | null = localStorage.getItem('fetch-calls')
+      const previousCalls: fetchCall[] = _previousCalls ? JSON.parse(_previousCalls) : []
+      localStorage.setItem('fetch-calls', JSON.stringify(previousCalls.concat(calls)))
+    } catch (error) {
+      throw new Error('Error saving call')
+    }
+  }
+
   getAllCalls(): { name: string, fetchId: string }[] {
     try {
       const _previousCalls: string | null = localStorage.getItem('fetch-calls')
