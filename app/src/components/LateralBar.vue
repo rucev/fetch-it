@@ -43,6 +43,41 @@
     }
   }
 
+  const onExportClick = () => {
+    const blob: Blob = callRepo.getAllCallsToDownload()
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = "fetch-it-calls.json"
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  const handleFileUpload = (event: any) => { //TODO look out what kind of event it is
+      const input = event.target as HTMLInputElement
+      const file = input.files?.[0]
+
+      if (!file) return
+
+      const reader = new FileReader()
+
+      reader.onload = (_event) => {
+        try {
+          const result = _event.target?.result;
+          if (typeof result === 'string') {
+            const parsedData = JSON.parse(result)
+            callRepo.saveMultipleCalls(parsedData)
+            loadSavedCalls()
+          }
+        } catch (error) {
+          console.error('Failed to parse JSON: ' + error)
+        }
+      }
+
+    reader.readAsText(file)
+
+  }
+
   onMounted(() => {
     loadSavedCalls()
     window.addEventListener('keydown', handleKeydown)
@@ -74,7 +109,8 @@
       role="region"
       aria-label="Saved calls sidebar"
     >
-      <h2 class="text-lg font-bold mb-2">Saved Calls</h2>
+      <div class="flex flex-col gap-2">
+        <h2 class="text-lg font-bold mb-2">Saved Calls</h2>
       <ul class="space-y-2">
         <li
           v-for="call in calls"
@@ -96,18 +132,39 @@
             {{ call.name }}
           </button>
         </li>
-      </ul>
+        </ul>
+      </div>
+        <div class="w-full flex flex-row gap-6 justify-start">
+          <button aria-label="Export saved calls to a json file" class="download-btn" @click="onExportClick">Export Calls <i class="pi pi-download"></i></button>
+          <label for="fileUpload" class="download-btn">
+            Import Calls <i class="pi pi-file-import"></i>
+            <input
+              id="fileUpload"
+              @change="handleFileUpload"
+              type="file"
+              accept="application/json"
+              aria-label="Import saved calls from a valid JSON file"
+              class="hidden"
+              placeholder="Your JSON file"
+            />
+          </label>    
+        </div>
     </aside>
   </div>
 </template>
 <style scoped>
   @import "tailwindcss";
+  
 
   .saved-calls-container {
-    @apply w-screen max-w-screen h-screen top-0 flex flex-col gap-2 md:w-[720px] bg-stone-900 shadow pt-14 px-5;
+    @apply w-screen max-w-screen h-screen top-0 flex flex-col justify-between md:w-[720px] bg-stone-900 shadow pt-14 px-5 pb-10;
   }
 
   .saved-call {
     @apply flex flex-row w-full gap-3 items-center justify-start;
+  }
+
+  .download-btn {
+    @apply max-w-52 hover:bg-gray-200 focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 cursor-pointer flex flex-row justify-center gap-3 bg-gray-300 text-stone-800 font-bold py-2 px-4 rounded items-center
   }
 </style>
