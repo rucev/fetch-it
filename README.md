@@ -122,7 +122,7 @@ The app is deployed using GitHub Pages via a CI/CD workflow on the main branch: 
 ## Roadmap
 ### Features
 
-- [ ] Import/export saved requests [#3](https://github.com/rucev/fetch-it/issues/3)
+- [x] Import/export saved requests [#3](https://github.com/rucev/fetch-it/issues/3)
 - [ ] Collections to organize saved calls [#4](https://github.com/rucev/fetch-it/issues/4)
 - [ ] Postman/Insomnia file import support [#5](https://github.com/rucev/fetch-it/issues/5)
 - [ ] Advanced cURL customization (multiline, verbose) [#6](https://github.com/rucev/fetch-it/issues/6)
