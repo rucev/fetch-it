@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed, nextTick, ref, toRaw, watch } from 'vue'
+  import { computed, nextTick, ref, toRaw, watchEffect } from 'vue'
   import {DisplayResponse, Footer, LateralBar, DisplayCurl, RequestForm, OptionsMenu} from './components/index.ts'
   import { callFetch, generateCurl } from './core/index.ts'
   import { calls } from './repository/index.ts'
@@ -12,34 +12,27 @@
   const isFormDisplayed = ref<boolean>(false)
   const displayResponse = ref<boolean>(false)
   const displayCurl = ref<boolean>(false)
+  const hasChangedSinceLoad = ref(false)
   let bodyFormData = ref<BodyInfo | undefined>(undefined)
 
   const lastRequestSnapshot = ref<string>('')
 
   const callRepo = new calls.repository()
 
-  const canSave = computed(() => {
+  
+  const canCurl = computed(() => {
     const hasUrl = !!urlFormData.value.url
-    const hasHeaders = headersFormData.value.length > 0
-    const hasBody = !!bodyFormData.value?.content
-    const hasResponse = !!responseToDisplay
 
-    return hasUrl && (hasHeaders || hasBody || hasResponse)
+    return hasUrl
   })
 
-  watch(
-    [urlFormData, headersFormData, bodyFormData, canSave],
-    () => {
-      const currentSnapshot = JSON.stringify(getFormData())
-      if (currentSnapshot !== lastRequestSnapshot.value) {
-        responseToDisplay.value = undefined
-        generatedCurl.value = undefined
-      }
-    },
-    { deep: true }
-  )
+  const canSave = computed(() => {
+    const hasUrl = !!urlFormData.value.url
 
-  const getFormData = (): Options => {
+    return hasChangedSinceLoad.value && hasUrl
+  })
+
+    const getFormData = (): Options => {
     const headers: HeaderRequest[] = headersFormData.value
       .filter(header => header.name && header.value)
       .map(header => ({ name: header.name, value: header.value }))
@@ -54,6 +47,17 @@
       return options
   }
 
+  watchEffect(() => {
+    const currentSnapshot = JSON.stringify(getFormData())
+
+    hasChangedSinceLoad.value = currentSnapshot !== lastRequestSnapshot.value
+
+    if (hasChangedSinceLoad.value) {
+      responseToDisplay.value = undefined
+      generatedCurl.value = undefined
+    }
+  })
+
   const submitFetch = async () => {
     displayResponse.value = true
     try {
@@ -61,6 +65,7 @@
       const response = await callFetch(options)
       responseToDisplay.value = response
       lastRequestSnapshot.value = JSON.stringify(options)
+      hasChangedSinceLoad.value = false 
     } catch (error: any) {
       responseToDisplay.value = error.message
     }
@@ -72,6 +77,7 @@
       const options = getFormData()
       generatedCurl.value = generateCurl(options, true)
       lastRequestSnapshot.value = JSON.stringify(options)
+      hasChangedSinceLoad.value = false 
     } catch (error: any) {
       generatedCurl.value = error.message
     }
@@ -85,11 +91,15 @@
       headersFormData.value = options.headers || []
       bodyFormData.value = options.body || undefined
 
-      displayResponse.value = false
       nextTick(() => {
+        lastRequestSnapshot.value = JSON.stringify(getFormData())
+        hasChangedSinceLoad.value = false
+
         responseToDisplay.value = response
         displayResponse.value = true
       })
+
+      displayResponse.value = false
     }
   }
 
@@ -117,7 +127,7 @@
     <LateralBar v-on:load-call="loadCallById"/>
     <div class="flex flex-col gap-5 pt-5 overflow-y-hidden items-center w-full overflow-hidden h-full">
       <h1 class="text-7xl font-extrabold">Fetch It</h1>
-      <OptionsMenu :canSave="canSave" :submitFetch="submitFetch" :saveCall="saveCall" :resetCall="resetCall" :submitCurl="submitCurl" />
+      <OptionsMenu :canSave="canSave" :canCurl="canCurl" :submitFetch="submitFetch" :saveCall="saveCall" :resetCall="resetCall" :submitCurl="submitCurl" />
       <RequestForm v-model:urlFormData="urlFormData" v-model:headersFormData="headersFormData" v-model:bodyFormData="bodyFormData" v-model:isFormDisplayed="isFormDisplayed" />
       <hr class="w-4/5 border-0 h-0.5 bg-stone-900" />
       <DisplayResponse v-if="responseToDisplay" :response="responseToDisplay" />      

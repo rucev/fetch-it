@@ -8,6 +8,7 @@ describe('OptionsMenu', () => {
     const { getByRole } = render(OptionsMenu, {
       props: {
         canSave: true,
+        canCurl: true,
         submitFetch: vi.fn(),
         submitCurl: vi.fn(),
         saveCall: vi.fn(),
@@ -30,6 +31,7 @@ describe('OptionsMenu', () => {
     const { getByRole } = render(OptionsMenu, {
       props: {
         canSave: true,
+        canCurl: true,
         submitFetch,
         submitCurl,
         saveCall,
@@ -50,10 +52,11 @@ describe('OptionsMenu', () => {
     expect(resetCall).toHaveBeenCalledTimes(1)
   })
 
-  it('disables all buttons when canSave is false', () => {
+  it('disables all buttons when canSave and canCurl are false', () => {
     const { getByRole } = render(OptionsMenu, {
       props: {
         canSave: false,
+        canCurl: false,
         submitFetch: vi.fn(),
         submitCurl: vi.fn(),
         saveCall: vi.fn(),
