@@ -71,6 +71,18 @@ describe('CallsRepository', () => {
     response: undefined,
   }
 
+  const sampleCall4: fetchCall = {
+    name: 'GET https://api4.test.com',
+    fetchId: 'lmn-456',
+    request: {
+      method: 'GET',
+      url: 'https://api4.test.com',
+      header: [],
+      body: undefined,
+    },
+    response: undefined,
+  }
+
   const sampleCollection: fetchCollection = {
     calls: [sampleCall.fetchId, sampleCall2.fetchId],
     name: 'TestCollection',
@@ -94,7 +106,7 @@ describe('CallsRepository', () => {
       expect(savedData).toContainEqual(sampleCollection)
     })
 
-    it('should append call if calls already exist', () => {
+    it('should append collection if collections already exist', () => {
       vi.spyOn(localStorage, 'getItem').mockReturnValueOnce(JSON.stringify([sampleCollection]))
 
       repo.saveCollection(sampleCollection2)
@@ -106,5 +118,36 @@ describe('CallsRepository', () => {
       expect(savedData).toContainEqual(sampleCollection)
       expect(savedData).toContainEqual(sampleCollection2)
     })
+  })
+
+  describe('addCallsToCollection', () => {
+    it('should add calls to an existent collection to localStorage', () => {
+      vi.spyOn(localStorage, 'getItem').mockReturnValueOnce(JSON.stringify([sampleCollection]))
+      repo.addCallsToCollection(sampleCollection.fetchId, sampleCall3.fetchId, sampleCall4.fetchId)
+
+      expect(localStorage.getItem).toHaveBeenCalled()
+      expect(localStorage.setItem).toHaveBeenCalled()
+
+      const raw = localStorage.getItem('fetch-collections')
+      const savedData = raw !== null ? JSON.parse(raw) : null
+      const updatedCollection: fetchCollection | undefined = savedData.find(collection => collection.fetchId === sampleCollection.fetchId)
+
+      expect(updatedCollection?.calls).toContainEqual(sampleCall3.fetchId)
+      expect(updatedCollection?.calls).toContainEqual(sampleCall4.fetchId)
+      expect(updatedCollection?.calls.length).toEqual(4)
+    })
+    /*
+        it('should throw error if no collection found', () => {
+          vi.spyOn(localStorage, 'getItem').mockReturnValueOnce(JSON.stringify([sampleCollection]))
+    
+          repo.saveCollection(sampleCollection2)
+    
+          const raw = localStorage.getItem('fetch-collections')
+          const savedData = raw !== null ? JSON.parse(raw) : null
+    
+          expect(savedData.length).toBe(2)
+          expect(savedData).toContainEqual(sampleCollection)
+          expect(savedData).toContainEqual(sampleCollection2)
+        })*/
   })
 })

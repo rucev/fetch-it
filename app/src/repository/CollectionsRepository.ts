@@ -11,4 +11,22 @@ export default class CollectionsRepository {
       throw new Error('Error saving collection')
     }
   }
+
+  addCallsToCollection(collectionId: string, ...calls: string[]): void {
+    try {
+      const _collections: string | null = localStorage.getItem('fetch-collections')
+      const collections: fetchCollection[] = _collections ? JSON.parse(_collections) : []
+
+      const collectionIndex: number = collections.findIndex(collection => collection.fetchId === collectionId)
+
+      if (collectionIndex !== -1) {
+        collections[collectionIndex].calls = [...collections[collectionIndex].calls, ...calls]
+
+        localStorage.setItem('fetch-collections', JSON.stringify(collections))
+      } else throw new Error('Collection not found')
+    } catch (error) {
+      throw new Error('Error saving collection')
+    }
+  }
+
 }
