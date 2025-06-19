@@ -178,7 +178,7 @@ describe('CallsRepository', () => {
   describe('updateCollectionName', () => {
     it('should change the name of a collection saved in localStorage', () => {
       vi.spyOn(localStorage, 'getItem').mockReturnValueOnce(JSON.stringify([sampleCollection]))
-      repo.updateCollectionName(sampleCollection.fetchId, 'collection new name')
+      repo.updateCollectionNameById(sampleCollection.fetchId, 'collection new name')
 
       expect(localStorage.getItem).toHaveBeenCalled()
       expect(localStorage.setItem).toHaveBeenCalled()
@@ -194,7 +194,7 @@ describe('CallsRepository', () => {
   describe('deleteCollection', () => {
     it('should delete a collection saved in localStorage', () => {
       vi.spyOn(localStorage, 'getItem').mockReturnValueOnce(JSON.stringify([sampleCollection, sampleCollection2]))
-      repo.deleteCollection(sampleCollection.fetchId)
+      repo.deleteCollectionById(sampleCollection.fetchId)
 
       expect(localStorage.getItem).toHaveBeenCalled()
       expect(localStorage.setItem).toHaveBeenCalled()

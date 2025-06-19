@@ -65,7 +65,7 @@ export default class CollectionsRepository {
     }
   }
 
-  updateCollectionName(collectionId: string, newName: string): void {
+  updateCollectionNameById(collectionId: string, newName: string): void {
     try {
       const _collections: string | null = localStorage.getItem('fetch-collections')
       const collections: fetchCollection[] = _collections ? JSON.parse(_collections) : []
@@ -82,7 +82,7 @@ export default class CollectionsRepository {
     }
   }
 
-  deleteCollection(collectionId: string): void {
+  deleteCollectionById(collectionId: string): void {
     try {
       const _collections: string | null = localStorage.getItem('fetch-collections')
       const collections: fetchCollection[] = _collections ? JSON.parse(_collections) : []
@@ -98,6 +98,4 @@ export default class CollectionsRepository {
       throw new Error(`Error saving collection: ${error}`)
     }
   }
-
-
 }

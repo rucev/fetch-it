@@ -42,31 +42,48 @@ export default class CallsRepository {
     }
   }
 
-  loadCallById(id: string): fetchCall | undefined {
+  loadCallById(callId: string): fetchCall | undefined {
     try {
       const _previousCalls: string | null = localStorage.getItem('fetch-calls')
       const previousCalls: fetchCall[] = _previousCalls ? JSON.parse(_previousCalls) : []
 
-      const foundCall: fetchCall | undefined = previousCalls.find(call => call.fetchId === id)
+      const foundCall: fetchCall | undefined = previousCalls.find(call => call.fetchId === callId)
       return foundCall;
     } catch (error) {
-      throw new Error(`Error loading call ${id}`);
+      throw new Error(`Error loading call ${callId}`);
     }
   }
 
-  deleteCallById(id: string): void {
+  deleteCallById(callId: string): void {
     try {
       const _previousCalls: string | null = localStorage.getItem('fetch-calls')
       const previousCalls: fetchCall[] = _previousCalls ? JSON.parse(_previousCalls) : []
 
-      const callIndex: number = previousCalls.findIndex(call => call.fetchId === id)
+      const callIndex: number = previousCalls.findIndex(call => call.fetchId === callId)
 
       if (callIndex !== -1) {
         previousCalls.splice(callIndex, 1)
         localStorage.setItem('fetch-calls', JSON.stringify(previousCalls))
       }
     } catch (error) {
-      throw new Error(`Error deleting call ${id}`)
+      throw new Error(`Error deleting call ${callId}`)
+    }
+  }
+
+  updateCallNameById(callId: string, newName: string): void {
+    try {
+      const _calls: string | null = localStorage.getItem('fetch-calls')
+      const calls: fetchCall[] = _calls ? JSON.parse(_calls) : []
+
+      const callIndex: number = calls.findIndex(call => call.fetchId === callId)
+
+      if (callIndex !== -1) {
+        calls[callIndex].name = newName
+
+        localStorage.setItem('fetch-calls', JSON.stringify(calls))
+      } else throw new Error('Call not found')
+    } catch (error) {
+      throw new Error(`Error updating name on call ${callId}`)
     }
   }
 }

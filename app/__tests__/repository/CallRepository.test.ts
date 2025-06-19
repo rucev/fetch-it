@@ -173,4 +173,22 @@ describe('CallsRepository', () => {
       expect(localStorage.setItem).not.toHaveBeenCalled()
     })
   })
+
+  describe('updateCallNameById', () => {
+    it('should change the call name by fetchId', () => {
+      vi.spyOn(localStorage, 'getItem').mockReturnValueOnce(JSON.stringify([sampleCall, sampleCall2, sampleCall3]))
+      repo.updateCallNameById(sampleCall2.fetchId, 'new call name')
+
+      const raw = localStorage.getItem('fetch-calls')
+      const savedData = raw !== null ? JSON.parse(raw) : null
+
+      const updatedCall: fetchCall | undefined = savedData.find(call => call.fetchId === sampleCall2.fetchId)
+
+      expect(updatedCall?.name).toBe('new call name')
+
+      expect(savedData.length).toBe(3)
+      expect(savedData).toContainEqual(sampleCall)
+      expect(savedData).toContainEqual(sampleCall3)
+    })
+  })
 })
