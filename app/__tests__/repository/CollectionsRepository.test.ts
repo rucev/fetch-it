@@ -132,6 +132,8 @@ describe('CallsRepository', () => {
       const savedData = raw !== null ? JSON.parse(raw) : null
       const updatedCollection: fetchCollection | undefined = savedData.find(collection => collection.fetchId === sampleCollection.fetchId)
 
+      expect(updatedCollection?.calls).toContainEqual(sampleCall.fetchId)
+      expect(updatedCollection?.calls).toContainEqual(sampleCall2.fetchId)
       expect(updatedCollection?.calls).toContainEqual(sampleCall3.fetchId)
       expect(updatedCollection?.calls).toContainEqual(sampleCall4.fetchId)
       expect(updatedCollection?.calls.length).toEqual(4)
@@ -152,6 +154,24 @@ describe('CallsRepository', () => {
 
       expect(updatedCollection?.calls).toContainEqual(sampleCall2.fetchId)
       expect(updatedCollection?.calls.length).toEqual(1)
+    })
+  })
+
+  describe('updateAllCallsFromCollection', () => {
+    it('should add calls to an existent collection to localStorage', () => {
+      vi.spyOn(localStorage, 'getItem').mockReturnValueOnce(JSON.stringify([sampleCollection]))
+      repo.updateAllCallsFromCollection(sampleCollection.fetchId, sampleCall3.fetchId, sampleCall4.fetchId)
+
+      expect(localStorage.getItem).toHaveBeenCalled()
+      expect(localStorage.setItem).toHaveBeenCalled()
+
+      const raw = localStorage.getItem('fetch-collections')
+      const savedData = raw !== null ? JSON.parse(raw) : null
+      const updatedCollection: fetchCollection | undefined = savedData.find(collection => collection.fetchId === sampleCollection.fetchId)
+
+      expect(updatedCollection?.calls).toContainEqual(sampleCall3.fetchId)
+      expect(updatedCollection?.calls).toContainEqual(sampleCall4.fetchId)
+      expect(updatedCollection?.calls.length).toEqual(2)
     })
   })
 
