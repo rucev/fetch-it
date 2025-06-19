@@ -65,6 +65,23 @@ export default class CollectionsRepository {
     }
   }
 
+  updateCollectionName(collectionId: string, newName: string): void {
+    try {
+      const _collections: string | null = localStorage.getItem('fetch-collections')
+      const collections: fetchCollection[] = _collections ? JSON.parse(_collections) : []
+
+      const collectionIndex: number = collections.findIndex(collection => collection.fetchId === collectionId)
+
+      if (collectionIndex !== -1) {
+        collections[collectionIndex].name = newName
+
+        localStorage.setItem('fetch-collections', JSON.stringify(collections))
+      } else throw new Error('Collection not found')
+    } catch (error) {
+      throw new Error(`Error saving collection: ${error}`)
+    }
+  }
+
 
 
 }

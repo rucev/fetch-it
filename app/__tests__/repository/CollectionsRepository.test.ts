@@ -158,7 +158,7 @@ describe('CallsRepository', () => {
   })
 
   describe('updateAllCallsFromCollection', () => {
-    it('should add calls to an existent collection to localStorage', () => {
+    it('should update all calls from an existent collection to localStorage', () => {
       vi.spyOn(localStorage, 'getItem').mockReturnValueOnce(JSON.stringify([sampleCollection]))
       repo.updateAllCallsFromCollection(sampleCollection.fetchId, sampleCall3.fetchId, sampleCall4.fetchId)
 
@@ -175,5 +175,20 @@ describe('CallsRepository', () => {
     })
   })
 
+  describe('updateCollectionName', () => {
+    it('should change the name of a collection saved in localStorage', () => {
+      vi.spyOn(localStorage, 'getItem').mockReturnValueOnce(JSON.stringify([sampleCollection]))
+      repo.updateCollectionName(sampleCollection.fetchId, 'collection new name')
+
+      expect(localStorage.getItem).toHaveBeenCalled()
+      expect(localStorage.setItem).toHaveBeenCalled()
+
+      const raw = localStorage.getItem('fetch-collections')
+      const savedData = raw !== null ? JSON.parse(raw) : null
+      const updatedCollection: fetchCollection | undefined = savedData.find(collection => collection.fetchId === sampleCollection.fetchId)
+
+      expect(updatedCollection?.name).toBe('collection new name')
+    })
+  })
 
 })
