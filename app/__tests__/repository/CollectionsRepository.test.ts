@@ -90,7 +90,7 @@ describe('CallsRepository', () => {
   }
 
   const sampleCollection2: fetchCollection = {
-    calls: [sampleCall2.fetchId, sampleCall3.fetchId],
+    calls: [sampleCall2.fetchId, sampleCall3.fetchId, sampleCall4.fetchId],
     name: 'Test2Collection',
     fetchId: 'test2-id'
   }
@@ -136,18 +136,24 @@ describe('CallsRepository', () => {
       expect(updatedCollection?.calls).toContainEqual(sampleCall4.fetchId)
       expect(updatedCollection?.calls.length).toEqual(4)
     })
-    /*
-        it('should throw error if no collection found', () => {
-          vi.spyOn(localStorage, 'getItem').mockReturnValueOnce(JSON.stringify([sampleCollection]))
-    
-          repo.saveCollection(sampleCollection2)
-    
-          const raw = localStorage.getItem('fetch-collections')
-          const savedData = raw !== null ? JSON.parse(raw) : null
-    
-          expect(savedData.length).toBe(2)
-          expect(savedData).toContainEqual(sampleCollection)
-          expect(savedData).toContainEqual(sampleCollection2)
-        })*/
   })
+
+  describe('deleteCallsFromCollection', () => {
+    it('should delete calls from an existent collection in localStorage', () => {
+      vi.spyOn(localStorage, 'getItem').mockReturnValueOnce(JSON.stringify([sampleCollection2]))
+      repo.deleteCallsFromCollection(sampleCollection2.fetchId, sampleCall3.fetchId, sampleCall4.fetchId)
+
+      expect(localStorage.getItem).toHaveBeenCalled()
+      expect(localStorage.setItem).toHaveBeenCalled()
+
+      const raw = localStorage.getItem('fetch-collections')
+      const savedData = raw !== null ? JSON.parse(raw) : null
+      const updatedCollection: fetchCollection | undefined = savedData.find(collection => collection.fetchId === sampleCollection2.fetchId)
+
+      expect(updatedCollection?.calls).toContainEqual(sampleCall2.fetchId)
+      expect(updatedCollection?.calls.length).toEqual(1)
+    })
+  })
+
+
 })

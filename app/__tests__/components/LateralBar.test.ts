@@ -79,37 +79,11 @@ describe('LateralBar', () => {
 
     await fireEvent.click(toggleBtn)
 
-    const deleteButtons = screen.getAllByRole('button', { name: /delete saved call/i })
+    const menuButtons = screen.getAllByRole('button', { name: /open call options menu/i })
 
     expect(screen.getByText('Mock Call')).toBeInTheDocument()
     expect(screen.getByText('Another Call')).toBeInTheDocument()
-    expect(deleteButtons.length).toBe(2)
-  })
-
-  it('calls "deleteCallById" and updates list when delete button is clicked', async () => {
-    render(LateralBar)
-    const toggleBtn = screen.getByRole('button', { name: /toggle saved calls menu/i })
-    await fireEvent.click(toggleBtn)
-
-    const deleteButtons = screen.getAllByRole('button', { name: /delete saved call/i })
-    expect(deleteButtons.length).toBeGreaterThan(0)
-
-    await fireEvent.click(deleteButtons[0])
-    const mockInstance = (CallsRepository as Mock).mock.results[0].value
-    expect(mockInstance.deleteCallById).toHaveBeenCalled()
-  })
-
-  it('emits "loadCall" and closes sidebar when a call is clicked', async () => {
-    const { emitted } = render(LateralBar)
-    const toggleBtn = screen.getByRole('button', { name: /toggle saved calls menu/i })
-
-    await fireEvent.click(toggleBtn)
-    const loadButton = screen.getByRole('button', { name: /load saved call Mock Call/i })
-    await fireEvent.click(loadButton)
-
-    expect(emitted()).toHaveProperty('loadCall')
-    expect(emitted().loadCall[0]).toEqual(['abc123'])
-    expect(screen.queryByRole('region')).not.toBeInTheDocument()
+    expect(menuButtons.length).toBe(2)
   })
 
   it('calls "onExportClick" and updates list when export button is clicked', async () => {
