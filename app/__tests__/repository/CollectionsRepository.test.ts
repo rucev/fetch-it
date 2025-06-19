@@ -191,4 +191,20 @@ describe('CallsRepository', () => {
     })
   })
 
+  describe('deleteCollection', () => {
+    it('should delete a collection saved in localStorage', () => {
+      vi.spyOn(localStorage, 'getItem').mockReturnValueOnce(JSON.stringify([sampleCollection, sampleCollection2]))
+      repo.deleteCollection(sampleCollection.fetchId)
+
+      expect(localStorage.getItem).toHaveBeenCalled()
+      expect(localStorage.setItem).toHaveBeenCalled()
+
+      const raw = localStorage.getItem('fetch-collections')
+      const savedData = raw !== null ? JSON.parse(raw) : null
+
+      expect(savedData.length).toBe(1)
+      expect(savedData).toContainEqual(sampleCollection2)
+    })
+  })
+
 })
