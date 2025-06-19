@@ -1,5 +1,5 @@
 import CallsRepository from '../../src/repository/CallsRepository'
-import type { fetchCall } from '../../src/interfaces/interfaces'
+import type { fetchCall, fetchCollection } from '../../src/interfaces/interfaces'
 import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest'
 
 const store: Record<string, string> = {}
@@ -70,6 +70,31 @@ describe('CallsRepository', () => {
     },
     response: undefined,
   }
+
+  const sampleCall4: fetchCall = {
+    name: 'GET https://api4.test.com',
+    fetchId: 'lmn-456',
+    request: {
+      method: 'GET',
+      url: 'https://api4.test.com',
+      header: [],
+      body: undefined,
+    },
+    response: undefined,
+  }
+
+  const sampleCollection: fetchCollection = {
+    calls: [sampleCall.fetchId, sampleCall2.fetchId],
+    name: 'TestCollection',
+    fetchId: 'test-id'
+  }
+
+  const sampleCollection2: fetchCollection = {
+    calls: [sampleCall2.fetchId, sampleCall3.fetchId],
+    name: 'Test2Collection',
+    fetchId: 'test2-id'
+  }
+
 
   describe('saveCall', () => {
     it('should save a new call to localStorage', () => {
@@ -171,6 +196,30 @@ describe('CallsRepository', () => {
       vi.spyOn(localStorage, 'getItem').mockReturnValueOnce(JSON.stringify([sampleCall]))
       repo.deleteCallById('nonexistent')
       expect(localStorage.setItem).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('getCollectionlessCalls', () => {
+    it('should get all calls that are not in a collection', () => {
+      vi.spyOn(localStorage, 'getItem').mockReturnValueOnce(JSON.stringify([sampleCollection]))
+      vi.spyOn(localStorage, 'getItem').mockReturnValueOnce(JSON.stringify([sampleCall, sampleCall2, sampleCall3, sampleCall4]))
+      const calls = repo.getCollectionlessCalls()
+
+      expect(calls.length).toBe(2)
+      expect(calls).toContainEqual({ name: sampleCall3.name, fetchId: sampleCall3.fetchId })
+      expect(calls).toContainEqual({ name: sampleCall4.name, fetchId: sampleCall4.fetchId })
+    })
+  })
+
+  describe('getCallsByCollection', () => {
+    it('should get all calls that are not in a collection', () => {
+      vi.spyOn(localStorage, 'getItem').mockReturnValueOnce(JSON.stringify([sampleCollection, sampleCollection2]))
+      vi.spyOn(localStorage, 'getItem').mockReturnValueOnce(JSON.stringify([sampleCall, sampleCall2, sampleCall3, sampleCall4]))
+      const calls = repo.getCallsByCollection(sampleCollection2.fetchId)
+
+      expect(calls.length).toBe(2)
+      expect(calls).toContainEqual({ name: sampleCall3.name, fetchId: sampleCall3.fetchId })
+      expect(calls).toContainEqual({ name: sampleCall2.name, fetchId: sampleCall2.fetchId })
     })
   })
 

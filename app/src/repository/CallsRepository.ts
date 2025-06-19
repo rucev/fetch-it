@@ -1,4 +1,4 @@
-import type { fetchCall } from "../interfaces/interfaces"
+import type { fetchCall, fetchCollection } from "../interfaces/interfaces"
 
 export default class CallsRepository {
   saveCall(call: fetchCall): void {
@@ -29,6 +29,43 @@ export default class CallsRepository {
       return previousCalls.map(call => { return { name: call.name, fetchId: call.fetchId } })
     } catch (error) {
       throw new Error('Error loading previous calls')
+    }
+  }
+
+  getCollectionlessCalls(): { name: string, fetchId: string }[] {
+    try {
+      const _collections: string | null = localStorage.getItem('fetch-collections')
+      const collections: fetchCollection[] = _collections ? JSON.parse(_collections) : []
+
+      const callsInCollections: string[] = [...new Set(collections.flatMap(collection => collection.calls))]
+
+      const _previousCalls: string | null = localStorage.getItem('fetch-calls')
+      const previousCalls: fetchCall[] = _previousCalls ? JSON.parse(_previousCalls) : []
+
+      const filteredCalls = previousCalls.filter(call => !callsInCollections.includes(call.fetchId))
+      return filteredCalls.map(call => { return { name: call.name, fetchId: call.fetchId } })
+
+    } catch (error) {
+      throw new Error('Error loading previous calls')
+    }
+  }
+
+  getCallsByCollection(collectionId: string): { name: string, fetchId: string }[] {
+    try {
+      const _collections: string | null = localStorage.getItem('fetch-collections')
+      const collections: fetchCollection[] = _collections ? JSON.parse(_collections) : []
+
+      const collectionIndex: number = collections.findIndex(collection => collection.fetchId === collectionId)
+
+      if (collectionIndex !== -1) {
+        const _previousCalls: string | null = localStorage.getItem('fetch-calls')
+        const previousCalls: fetchCall[] = _previousCalls ? JSON.parse(_previousCalls) : []
+        const filteredCalls = previousCalls.filter(call => collections[collectionIndex].calls.includes(call.fetchId))
+        return filteredCalls.map(call => { return { name: call.name, fetchId: call.fetchId } })
+
+      } else throw new Error('Collection not found')
+    } catch (error) {
+      throw new Error(`Error loading collections: ${error}`)
     }
   }
 
