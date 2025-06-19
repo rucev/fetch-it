@@ -207,4 +207,17 @@ describe('CallsRepository', () => {
     })
   })
 
+  describe('getAllCollections', () => {
+    it('should get main collection data of all collections saved', () => {
+      vi.spyOn(localStorage, 'getItem').mockReturnValueOnce(JSON.stringify([sampleCollection, sampleCollection2]))
+      const collections = repo.getAllCollections()
+
+      expect(localStorage.getItem).toHaveBeenCalled()
+
+      expect(collections.length).toBe(2)
+      expect(collections).toContainEqual({ name: sampleCollection2.name, fetchId: sampleCollection2.fetchId })
+      expect(collections).toContainEqual({ name: sampleCollection.name, fetchId: sampleCollection.fetchId })
+    })
+  })
+
 })

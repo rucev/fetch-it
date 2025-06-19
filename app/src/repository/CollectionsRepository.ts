@@ -98,4 +98,14 @@ export default class CollectionsRepository {
       throw new Error(`Error saving collection: ${error}`)
     }
   }
+
+  getAllCollections(): { name: string, fetchId: string }[] {
+    try {
+      const _collections: string | null = localStorage.getItem('fetch-collections')
+      const collections: fetchCollection[] = _collections ? JSON.parse(_collections) : []
+      return collections.map(collection => { return { name: collection.name, fetchId: collection.fetchId } })
+    } catch (error) {
+      throw new Error(`Error loading collections: ${error}`)
+    }
+  }
 }
