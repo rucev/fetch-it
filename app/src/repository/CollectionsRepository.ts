@@ -1,4 +1,4 @@
-import type { fetchCollection } from "../interfaces/interfaces"
+import type { fetchCall, fetchCollection } from "../interfaces/interfaces"
 
 export default class CollectionsRepository {
   saveCollection(collection: fetchCollection): void {
@@ -106,6 +106,42 @@ export default class CollectionsRepository {
       return collections.map(collection => { return { name: collection.name, fetchId: collection.fetchId } })
     } catch (error) {
       throw new Error(`Error loading collections: ${error}`)
+    }
+  }
+
+  loadCollectionById(collectionId: string): fetchCollection | undefined {
+    try {
+      const _collections: string | null = localStorage.getItem('fetch-collections')
+      const collections: fetchCollection[] = _collections ? JSON.parse(_collections) : []
+
+      const foundCollection: fetchCollection | undefined = collections.find(collection => collection.fetchId === collectionId)
+      return foundCollection
+    } catch (error) {
+      throw new Error(`Error loading collections: ${error}`)
+    }
+  }
+
+
+  getCollectionToDownload(collectionId: string): Blob {
+    try {
+      const _collections = localStorage.getItem('fetch-collections') ?? ''
+      const _calls = localStorage.getItem('fetch-calls') ?? ''
+      const collections: fetchCollection[] = _collections ? JSON.parse(_collections) : []
+      const calls: fetchCall[] = _calls ? JSON.parse(_calls) : []
+
+      const foundCollection: fetchCollection | undefined = collections.find(collection => collection.fetchId === collectionId)
+      if (foundCollection) {
+        const filteredCalls = calls.filter(call => foundCollection.calls.includes(call.fetchId))
+        const collection = {
+          fetchId: foundCollection.fetchId,
+          name: foundCollection.name,
+          calls: filteredCalls
+        }
+        const blob = new Blob([JSON.stringify(collection)], { type: "application/json" })
+        return blob
+      } else throw new Error('Collection not found')
+    } catch (error) {
+      throw new Error('Error setting previous calls to download')
     }
   }
 }

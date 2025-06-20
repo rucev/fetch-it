@@ -1,13 +1,13 @@
 import type { fetchCall, fetchCollection, fetchCollectionDisplay } from '../interfaces/interfaces'
 import CallsRepository from './CallsRepository'
 
-export default class CallMapper {
-  static toPersistence(calls: fetchCall[], name: string | undefined): fetchCollection {
+export default class CollectionMapper {
+  static toPersistence(calls: string[], name: string | undefined): fetchCollection {
     const id = crypto.randomUUID()
     const collection: fetchCollection = {
       name: name ? name : `Collection-${id}`,
       fetchId: id,
-      calls: calls.map(call => call.fetchId)
+      calls
     }
     return collection
   }

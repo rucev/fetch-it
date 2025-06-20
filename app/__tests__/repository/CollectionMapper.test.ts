@@ -48,7 +48,7 @@ describe('CollectionMapper', () => {
 
   describe('toPersistence', () => {
     it('should map fetchCall[] to fetchCollection with name', () => {
-      const result = CollectionMapper.toPersistence(mockCalls, 'MyCollection')
+      const result = CollectionMapper.toPersistence(['id-1', 'id-2'], 'MyCollection')
 
       expect(result).toEqual({
         name: 'MyCollection',
@@ -58,7 +58,7 @@ describe('CollectionMapper', () => {
     })
 
     it('should use default name if none provided', () => {
-      const result = CollectionMapper.toPersistence(mockCalls, undefined)
+      const result = CollectionMapper.toPersistence(['id-1', 'id-2'], undefined)
 
       expect(result).toEqual({
         name: `Collection-${mockUUID}`,

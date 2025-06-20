@@ -4,16 +4,21 @@
   import { callFetch, generateCurl } from './core/index.ts'
   import { calls } from './repository/index.ts'
   import type { BodyInfo, fetchCall, HeaderRequest, Options, ResponseToDisplay } from './interfaces/interfaces.ts'
+import CollectionModal from './components/CollectionModal.vue'
 
   const urlFormData = ref<Record<string, any>>({method: 'GET'})
   let headersFormData = ref<HeaderRequest[]>([])
+  let bodyFormData = ref<BodyInfo | undefined>(undefined)
+
   let responseToDisplay = ref<ResponseToDisplay | undefined>(undefined)
   const generatedCurl = ref<string[] | string | undefined>(undefined)
+  const selectedCollection = ref<string>('')
+
   const isFormDisplayed = ref<boolean>(false)
   const displayResponse = ref<boolean>(false)
   const displayCurl = ref<boolean>(false)
-  const hasChangedSinceLoad = ref(false)
-  let bodyFormData = ref<BodyInfo | undefined>(undefined)
+  const displayCollectionModal = ref<boolean>(false)
+  const hasChangedSinceLoad = ref<boolean>(false)
 
   const lastRequestSnapshot = ref<string>('')
 
@@ -103,6 +108,11 @@
     }
   }
 
+  const selectCollectionById = (id: string | undefined) => {
+    if(id) selectedCollection.value = id
+    displayCollectionModal.value = true
+  }
+
   const resetCall = () => {
     urlFormData.value = {method: 'GET'}
     headersFormData.value = []
@@ -123,8 +133,9 @@
 </script>
 <template>
   <DisplayCurl v-if="displayCurl" :curl="generatedCurl" :onCloseCurl="() => {displayCurl = false}" />
-  <main :class="[displayCurl ? 'h-screen overflow-hidden blur-[0.1rem]' : 'h-fit']">
-    <LateralBar v-on:load-call="loadCallById"/>
+  <CollectionModal v-if="displayCollectionModal" :collectionId="selectedCollection" :onClose="() => {displayCollectionModal = false}" />
+  <main :class="[displayCurl || displayCollectionModal ? 'h-screen overflow-hidden blur-[0.1rem]' : 'h-fit']">
+    <LateralBar v-on:load-call="loadCallById" :setCollection="selectCollectionById"/>
     <div class="flex flex-col gap-5 pt-5 overflow-y-hidden items-center w-full overflow-hidden h-full">
       <h1 class="text-7xl font-extrabold">Fetch It</h1>
       <OptionsMenu :canSave="canSave" :canCurl="canCurl" :submitFetch="submitFetch" :saveCall="saveCall" :resetCall="resetCall" :submitCurl="submitCurl" />

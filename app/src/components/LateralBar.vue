@@ -1,10 +1,19 @@
 <script setup lang="ts">
   import { onMounted, ref, onBeforeUnmount } from 'vue'
   import CallsRepository from '../repository/CallsRepository'
+  import CallItem from './lateralBar/CallItem.vue'
+  import CollectionsRepository from '../repository/CollectionsRepository'
+  import CollectionItem from './lateralBar/CollectionItem.vue'
+
+  const props = defineProps<{ 
+    setCollection: Function
+  }>()
 
   const displayBar = ref(false)
-  const calls = ref<{ name: string; fetchId: string }[]>([])
+  const collections = ref<{ name: string; fetchId: string }[]>([])
+  const collectionlessCalls = ref<{ name: string; fetchId: string }[]>([])
   const callRepo = new CallsRepository()
+  const collectionRep = new CollectionsRepository()
   const sidebarRef = ref<HTMLElement | null>(null)
   const sidebarBtnRef = ref<HTMLElement | null>(null)
 
@@ -13,7 +22,8 @@
   }>()
 
   const loadSavedCalls = () => {
-    calls.value = callRepo.getAllCalls()
+    collections.value = collectionRep.getAllCollections()
+    collectionlessCalls.value = callRepo.getCollectionlessCalls()
   }
 
   const openMenu = () => {
@@ -21,14 +31,13 @@
     if (displayBar.value) loadSavedCalls()
   }
 
-  const deleteCall = (id: string) => {
-    callRepo.deleteCallById(id)
-    loadSavedCalls()
-  }
-
   const onCallClick = (id: string) => {
     emit('loadCall', id)
     displayBar.value = false
+  }
+
+  const onCollectionClick = (id: string) => {
+    props.setCollection(id)
   }
 
   const handleKeydown = (event: KeyboardEvent) => {
@@ -53,7 +62,13 @@
     URL.revokeObjectURL(url)
   }
 
-  const handleFileUpload = (event: any) => { //TODO look out what kind of event it is
+  const onCollectionEditClick = (id?: string) => {
+    if(id) props.setCollection(id)
+    else props.setCollection('')
+    displayBar.value = false
+  }
+
+  const handleFileUpload = (event: Event) => {
       const input = event.target as HTMLInputElement
       const file = input.files?.[0]
 
@@ -105,50 +120,59 @@
       ref="sidebarRef"
       v-if="displayBar"
       id="saved-calls-sidebar"
-      class="saved-calls-container absolute z-40"
+      class="lat-bar  absolute z-40"
       role="region"
       aria-label="Saved calls sidebar"
     >
-      <div class="flex flex-col gap-2">
-        <h2 class="text-lg font-bold mb-2">Saved Calls</h2>
-      <ul class="space-y-2">
-        <li
-          v-for="call in calls"
-          :key="call.fetchId"
-          class="p-2 saved-call"
-        >
+      <div class="flex flex-col gap-2 pl-5" >
+        <div class="flex flex-row w-full gap-2 justify-start pt-3">
+          <h2 class="text-lg font-bold uppercase">Collections</h2>
           <button
-            @click="deleteCall(call.fetchId)"
-            class="text-red-800 hover:text-red-500 cursor-pointer"
-            aria-label="Delete saved call"
+            class="cursor-pointer text-stone-200 hover:text-stone-500"
+            @click="() => onCollectionEditClick()"
+            aria-label="Create new collection"
           >
-            <i class="pi pi-trash text-xl" aria-hidden="true"></i>
+            <i class="pi pi-plus" aria-hidden="true"></i>
           </button>
-          <button
-            @click="onCallClick(call.fetchId)"
-            class="cursor-pointer w-full py-1 hover:text-gray-400 text-start"
-            :aria-label="`Load saved call ${call.name}`"
-          >
-            {{ call.name }}
-          </button>
-        </li>
-        </ul>
-      </div>
-        <div class="w-full flex flex-row gap-6 justify-start">
-          <button aria-label="Export saved calls to a json file" class="download-btn" @click="onExportClick">Export Calls <i class="pi pi-download"></i></button>
-          <label for="fileUpload" class="download-btn">
-            Import Calls <i class="pi pi-file-import"></i>
-            <input
-              id="fileUpload"
-              @change="handleFileUpload"
-              type="file"
-              accept="application/json"
-              aria-label="Import saved calls from a valid JSON file"
-              class="hidden"
-              placeholder="Your JSON file"
-            />
-          </label>    
         </div>
+
+        <ul class="space-y-2" v-if="collections.length > 0">
+          <li
+            v-for="collection in collections"
+            :key="collection.fetchId"
+            class="p-2"
+          >
+            <CollectionItem :collection="collection" :onCallClick="onCallClick" :onCallDelete="loadSavedCalls" :onEditCollection="onCollectionEditClick"/>
+          </li>
+          </ul>
+      </div>
+      <div class="flex flex-col gap-2 pl-5" v-if="collectionlessCalls.length > 0">
+        <h2 class="text-lg font-bold mb-2">Other Calls Saved</h2>
+        <ul class="space-y-2">
+          <li
+            v-for="call in collectionlessCalls"
+            :key="call.fetchId"
+            class="p-2 saved-call"
+          >
+            <CallItem :call="call" :onCallClick="() => onCallClick(call.fetchId)" :onCallDelete="loadSavedCalls" />
+          </li>
+          </ul>
+      </div>
+      <div class="w-full flex flex-row gap-6 justify-start">
+        <button aria-label="Export saved calls to a json file" class="download-btn" @click="onExportClick">Export Calls <i class="pi pi-download"></i></button>
+        <label for="fileUpload" class="download-btn">
+          Import Calls <i class="pi pi-file-import"></i>
+          <input
+            id="fileUpload"
+            @change="handleFileUpload"
+            type="file"
+            accept="application/json"
+            aria-label="Import saved calls from a valid JSON file"
+            class="hidden"
+            placeholder="Your JSON file"
+          />
+        </label>    
+      </div>
     </aside>
   </div>
 </template>
@@ -156,8 +180,8 @@
   @import "tailwindcss";
   
 
-  .saved-calls-container {
-    @apply w-screen max-w-screen h-screen top-0 flex flex-col justify-between md:w-[720px] bg-stone-900 shadow pt-14 px-5 pb-10;
+  .lat-bar {
+    @apply w-screen max-w-screen h-screen pt-12 pb-10 overflow-y-scroll top-0 flex flex-col justify-between md:w-[720px] bg-stone-900 shadow px-5;
   }
 
   .saved-call {
