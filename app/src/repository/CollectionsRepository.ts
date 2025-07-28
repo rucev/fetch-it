@@ -65,6 +65,36 @@ export default class CollectionsRepository {
     }
   }
 
+  getCollectionByIncludedCall(callId: string): string {
+    try {
+      const _collections: string | null = localStorage.getItem('fetch-collections')
+      const collections: fetchCollection[] = _collections ? JSON.parse(_collections) : []
+
+      const collectionIndex: number = collections.findIndex(collection => collection.calls.includes(callId))
+
+      if (collectionIndex !== -1) {
+        return collections[collectionIndex].fetchId
+      } else return ''
+    } catch (error) {
+      throw new Error(`Error saving collection: ${error}`)
+    }
+  }
+
+  getCollectionNameById(collectionId: string): string {
+    try {
+      const _collections: string | null = localStorage.getItem('fetch-collections')
+      const collections: fetchCollection[] = _collections ? JSON.parse(_collections) : []
+
+      const collectionIndex: number = collections.findIndex(collection => collection.fetchId === collectionId)
+
+      if (collectionIndex !== -1) {
+        return collections[collectionIndex].name
+      } else throw new Error('Collection not found')
+    } catch (error) {
+      throw new Error(`Error saving collection: ${error}`)
+    }
+  }
+
   updateCollectionNameById(collectionId: string, newName: string): void {
     try {
       const _collections: string | null = localStorage.getItem('fetch-collections')

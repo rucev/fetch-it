@@ -38,7 +38,10 @@
     const url = URL.createObjectURL(blob)
     const a = document.createElement("a")
     a.href = url
-    const collectionNameFile = props.collection.name.replace(/[\/|\\:*?"<>]/g, '').replace(' ', '-')
+    const collectionNameFile = props.collection.name
+      .replace(/[\/:*?"<>|]/g, '')                 // invalid characters
+      .replace(/\s+/g, '-')                        // spaces
+      .replace(/-+/g, '-').replace(/^-+|-+$/g, '') // fix excesive '-'
     a.download = `${collectionNameFile}.json`
     a.click()
     URL.revokeObjectURL(url)

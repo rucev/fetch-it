@@ -4,6 +4,7 @@
   import CallItem from './lateralBar/CallItem.vue'
   import CollectionsRepository from '../repository/CollectionsRepository'
   import CollectionItem from './lateralBar/CollectionItem.vue'
+import { handleCollectionImport } from '../core'
 
   const props = defineProps<{ 
     setCollection: Function
@@ -24,6 +25,7 @@
   const loadSavedCalls = () => {
     collections.value = collectionRep.getAllCollections()
     collectionlessCalls.value = callRepo.getCollectionlessCalls()
+    displayBar.value = true
   }
 
   const openMenu = () => {
@@ -68,7 +70,7 @@
     displayBar.value = false
   }
 
-  const handleFileUpload = (event: Event) => {
+  const onCollectionImportClick = (event: Event) => {
       const input = event.target as HTMLInputElement
       const file = input.files?.[0]
 
@@ -81,7 +83,7 @@
           const result = _event.target?.result;
           if (typeof result === 'string') {
             const parsedData = JSON.parse(result)
-            callRepo.saveMultipleCalls(parsedData)
+            handleCollectionImport(parsedData)
             loadSavedCalls()
           }
         } catch (error) {
@@ -95,6 +97,7 @@
 
   onMounted(() => {
     loadSavedCalls()
+    displayBar.value = false
     window.addEventListener('keydown', handleKeydown)
     window.addEventListener('click', handleClickOutside)
   })
@@ -105,7 +108,7 @@
   })
 </script>
 <template>
-  <div class="absolute z-20 top-0 left-0">
+  <div class="fixed z-20 top-0 left-0">
     <button
       ref="sidebarBtnRef"
       class="z-50 absolute top-2 left-2 cursor-pointer p-3 text-stone-200 hover:text-stone-500"
@@ -116,11 +119,11 @@
     >
       <i :class="['pi text-2xl', displayBar ? 'pi-times' : 'pi-list']" aria-hidden="true"></i>
     </button>
-    <aside
+    <aside @click.stop
       ref="sidebarRef"
       v-if="displayBar"
       id="saved-calls-sidebar"
-      class="lat-bar  absolute z-40"
+      class="lat-bar absolute z-40"
       role="region"
       aria-label="Saved calls sidebar"
     >
@@ -134,6 +137,20 @@
           >
             <i class="pi pi-plus" aria-hidden="true"></i>
           </button>
+          <label for="fileUpload"
+            class="cursor-pointer text-stone-200 hover:text-stone-500 self-center"
+            aria-label="Import collection"
+          > <i class="pi pi-file-import"></i>
+          <input
+            id="fileUpload"
+            @change="onCollectionImportClick"
+            type="file"
+            accept="application/json"
+            aria-label="Import saved collection from a valid JSON file"
+            class="hidden"
+            placeholder="Your JSON file"
+          />
+        </label>    
         </div>
 
         <ul class="space-y-2" v-if="collections.length > 0">
@@ -157,21 +174,6 @@
             <CallItem :call="call" :onCallClick="() => onCallClick(call.fetchId)" :onCallDelete="loadSavedCalls" />
           </li>
           </ul>
-      </div>
-      <div class="w-full flex flex-row gap-6 justify-start">
-        <button aria-label="Export saved calls to a json file" class="download-btn" @click="onExportClick">Export Calls <i class="pi pi-download"></i></button>
-        <label for="fileUpload" class="download-btn">
-          Import Calls <i class="pi pi-file-import"></i>
-          <input
-            id="fileUpload"
-            @change="handleFileUpload"
-            type="file"
-            accept="application/json"
-            aria-label="Import saved calls from a valid JSON file"
-            class="hidden"
-            placeholder="Your JSON file"
-          />
-        </label>    
       </div>
     </aside>
   </div>
